@@ -1,9 +1,12 @@
 # Dynamic Coattention Networks For Question Answering
 
-This paper aims to provide a model for QA. It encorporates a novel co attention system between the question and the passage. 
+This paper aims to provide a model for QA. It encorporates a novel co attention system between the question and the passage. The basic gist of this paper is that attention is usually calculated for a single entity, or vector.
+In this paper , they devised a mechanism to create attention vectors for two vectors/modalities, the passage and the question.
+
+
 
 ## Author 
-Salesforce
+Salesforce 
 
 ## Paper Link
 https://arxiv.org/abs/1611.01604
@@ -59,6 +62,7 @@ hence final dimensions are
 
 # The Co-Attention Encoder
 
+
 Gets co-fused attention of both question and passage
 ```
 1. Generates affinity matrix . L = P @ Q
@@ -88,5 +92,69 @@ So finally we get U which
 8. U => 2*(hidden_size, passage_len) as it's a bi lstm
 ```
 # Dynamic Pointer Network
+
+A pointer network predicts points in a document by indexes, for example it predcist what is the starting index and ending index of the answer to a question in the passage. As the SQUAD dataset has answers given in this format,pointer networks are currently one of the best ways to predict that.
+
+```
+Sample passage : blah blah blah, tom is in Kenya, blah blah blah
+Question: Where is Tome
+Answer : Index 31 - Index 34
+```
+
+The authors take an iterative approach to predicting start and end pointers, because sometimes there may be multiple answers to a question. And these answers may represent a local minima.
+To escape this local minima, prediction is done iteratively first predicting the start index, then the end index, then the start index , then the end index...
+Until the start and end index stop changing and/or the pre defined iterations comes to an end.
+
+Think of decoder as a state machine, state is stored in LSTM.
+```
+So for i iterations
+
+1. hidden state  = LSTM(previous_hidden_state, [U_previous_start; U_previous_end] )
+```
+
+alpha and beta are computed to denote the probabilites for start and end states.
+The max alpha and the max beta probability denote the index of the passage , the model has predicted.
+```
+s = argmax(alpha)
+e = argmax(beta)
+```
+Assumption
+
+```
+Initial start and end index can be 0 . Need to ask/find more about this
+```
+
+The alphas and betas are calculated through a highway maxout network. A high way network is such which has skip connections and max out networks are such that they if we have a output vectos of size m x n. The maxout procedure will just take the max(of each inner tensor)
+
+So output will be of size m, each value being the maximum value in that interior vector of size n.
+
+Two different highway maxout networks are used (HMN) for start and finish to predict alpha and beta.
+
+```
+HMN is as follows:
+1. R = tanh(Linear([hidden:U_previous_start:U_previous_end]))
+2. m1 = max( Linear( [U:R] ) + bias )
+3. m2 = max( Linear( m1 ) + bias )
+4. HMN = max( Linear( [m1;m2] ) + bias )
+```
+HMN is run for all U to geenrate alpha of same size as passage_len
+
+Then the current start/end state index is calcualated by arg max
+
+```
+1. s_new = argmax(alpha)
+2. e_new = argmax(beta)
+```
+
+And this process continues until iterations are complete or start/end stop varying.
+
+## Dimensions
+
+Todo
+
+
+
+
+
 
 
