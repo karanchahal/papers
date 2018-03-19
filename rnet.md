@@ -26,20 +26,23 @@ Lastly with this latest self matched vector, a two step lstm predicts the start 
 The model contains of 4 parts. Given as below.
 
 ## The Encoder
+```
 0. First GRU inilialise hidden state to zeros
 1. Passage and Question indexes are run through an embedding layer , or through pretrained Glove word vectors.
 2. Then embedded Passage and Question is encoded by a  bidrectional GRU consisting of 3 layers , let's call them u_q and u_p.
-
+```
 ### Dimensions
-
+```
 1. P => (1,passage_len)
 2. Q => (1,question_len)
 3. Passage, Question after embedding are of size (1,passage_len/question_len, 75)
 4. Hidden State of GRU is H => (6,1, 75) [6 as GRU is biredectional, hence 3*2 = 6 ]
-
+```
 ## The Gated Attention Recurrent Network
 
-Aim is to build question aware passage representation. 
+Aim is to build question aware passage representation.
+
+```
 1. For all passage words, these steps apply
  1. Get last hidden layer of gated recurrent network, H_G
  2. Get h, p and q by running H_G , Passage word and Question through linear layers. (Matrix Multiplication)
@@ -51,9 +54,10 @@ Aim is to build question aware passage representation.
  8. hidden_layer = GRU(gated_input)
  9. return hidden_layer
 2. Concat all hidden layers at each passage word time passage into v
-
+```
 
 ### Dimensions
+```
 0. passage_word, question => (1,150), (1,13,150)
 1. H_G = 1,150 of last layer 
 2. h,p,q => (1,75)
@@ -63,7 +67,7 @@ Aim is to build question aware passage representation.
 6. gated_input => (1,225)
 7. hidden_layer => (1,150) (concatenate bidirectional hidden layers)
 8. v => (1, passage_len, 150)
-
+```
 ## Self Matching Networks
 
 ## Pointer Networks
