@@ -52,7 +52,31 @@ small objects
 # Modifications to existing Networks to Incorporate FPN's
 
 ## FPN for RPN (Region Proposal Network)
-Todo , need to read RPN paper first
+
+### RPN
+
+The RPN Network is a network first described in the Faster RCNN paper. It was meant to seperate the foreground and background anchors. 
+Anchors are basically meant to denote , image regions at a particular pixel point as its center, and anchors can have a variety of scales. (1:1, 1:2,2:1) etc. The faster RCNN paper has 9 scales. For 3 scales and 3 resolutions.
+
+Anchors are fixed bounding boxes that are placed throughout the image with different sizes and ratios that are going to be used for reference when first predicting object locations.
+
+The RPN takes in an image feature map , outputted from a convolutional base. And attaches two heads to each anchor point. The two heads are:
+
+```
+1. The Classification head. A softmax layer that has 2 classes applied over all anchors.
+2. A regression head, that outputs 4 values for each anchor. delta _delta_x,delta_y,delta_h,delta_w_  All denoting errors in x, y (center coordinates) and height and width.
+```
+
+Anyway , more details on the Faster RCNN note. Please check that. 
+
+All we need ti knwo is that an RPN gets us a plausible set of anchors. Decided by taking the ones have an IOU of more than ~0.5 from the ground truth boxes.
+
+
+Now, onto the interesting part.
+
+## FPN in RPN
+
+
 
 
 
