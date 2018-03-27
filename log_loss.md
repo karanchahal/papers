@@ -9,10 +9,10 @@ I like to think of it as a loss that has two terms.
 
 Assume p to be the predicted probability. 
 
-## First Term 
+### First Term 
 p
 
-## Second Term
+### Second Term
 
 1 - p
 
@@ -40,20 +40,26 @@ we want a high loss, if probability of an object wanting to be what is really is
 
 Hence to get a high loss , we need to flip the negative sign.
 
+```
 1. a = -a
 2. b = -b
+```
 
 Now , we have these 2 losses, what we finally need is a way to weight these losses.
 
 It s a simple methodology, works with simply toggling them.
-Let y = actual probability ( 1 or 0 )
 
+```
+Let y = actual probability ( 1 or 0 )
+```
 log_loss = y*a + (1-y)*b
 
 or 
-
+```
 log_loss = -y*log(p) - (1-y)*log(1-p)
+```
 
-TADA !!
+
+*TADA !!*
 
 
