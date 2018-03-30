@@ -10,6 +10,8 @@ Then talk about innovations of each, slowly moving towards a fully convolutional
 
 Meanwhile, YOLO , SSD providing a new way of doing things.
 
+Also talk about convolutional bases and how they've evolved, inspiration from NLP solutions.
+
 Finally newest solution is Retina Net, mask R-CNN. 
 
 Newest verison of Yolo (v3) out. 
