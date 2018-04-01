@@ -67,25 +67,30 @@ The RCNN neytwork has several drawbacks
 
 To address these concerns, a new version of RCNN called Fast RCNN was made. The major innovation of Fast RCNN was that, it shared the features of a convolutional net and constructed a single step pipeline which trained a multitask loss. 
 
-The step in RCNN which was to crop the blobs and run them through a feature map, was innovated upon mainly.
+The step in R-CNN  which cropped each of the object proposals from the original image and run each of them through the conv net, was innovated upon mainly.
+
 The innovation was a method called ROI Pooling
 
-ROI Pooling or Region Of Interest Pooling, cropped the ROI's from the feature map instead of the input image, thus sharing computation. Also after these roi's were cropped out of a feature map and resized to a fixed size (7 by 7) , it was run though the Fast RCNN model
+ROI Pooling or Region Of Interest Pooling is as follows 
+
+1. Cropped the ROI's from the feature map itself instead of the input image, thus sharing computation. 
+
+2. Also after these ROI's were cropped out of a feature map and resized to a fixed size (7 by 7) , It was run though the Fast RCNN model
 
 
-The Fast RCNN Network was made of a feature map, followed by a few convolutional /pooling layers. 
-Then two prediction heads were attached on the final feature map. 
+The Fast RCNN Network was made of a feature map, followed by a few convolutional/pooling layers. 
+Then two prediction heads were attached on the final feature map.
 
 1. A classification head (to predict the types/class of objects) 
 2. A regression/location head ( to predict coordinates of objects)
 
-This was trained using a multitask loss which was 
+3. This was trained using a multitask loss which was 
 
-Loss_of_classification + lambda(loss of regression)
+* Loss_of_classification + lambda(loss of regression)
 
-lambda switched off and on if the region were background or not respectively.
+* lambda switched off and on if the region were background or not respectively.
 
-Hence this sharing of computatipon resulted in 
+Hence this sharing of computation resulted in 
 
 1. Higher accuracy
 2. Speed and Space efficiency (Testing on a single image reduced from 47 seconds to .32 seconds)
@@ -100,15 +105,95 @@ Even though Fast RCNN was a huge improvement, still some drawbacks were consiste
 
 # Faster RCNN
 
-To solve the above drawbacks , the authors decided to iterate RCNN framework on more time. They had identified thsat the claculation of proposals took a lot of time, Hence they set out to learn how to calculate proposals.
+To solve the above drawbacks , the authors decided to iterate RCNN framework one more time.
 
-So a major ,mileston in object recognition was achieved called the Region Proposal Network. 
-This network learns to calculate effective regions of interest.
+They had identified that the calculation of proposals took a lot of time, Hence they set out to learn how to calculate proposals.
+
+So a major ,milestone in object recognition was achieved called the *Region Proposal Network* . 
+This network learns to calculate effective regions of interest/object proposals.
 
 The model is as follows:
-1. Apply a convolution layer on the featuire map of the image gotten after being processed by a resnet or a vgg.
-2. Two prediction heads, classifiction and regression.
+Taking an input image.
 
-The RPN also brought a concept called anchors, which are predefined regions in an image , the RPN learn to calculate classification of all the anchors plus their distance from the real objects.
+Targets are calculated taking the ground truth bounding boxes and calculating some regions of interest from that data. 
 
-Anchors are defined as occuring after every x number of pixels in the image, and have different scales and aspect ratios. For example, 1:1, 1:2, 2:1 and scales 32px, 64px, 128px.
+Intuitively we can think of it , as we are making the learning task a litle easier. Instead of predicting the final boxes, we tell the network to predict a large number of plausible boxes.
+
+These target regions proposals are generated with a concept known as anchors.
+
+What are anchors? Anchors are , simply put,  predefined crops of a 224 by 224 image.
+
+Think of them as patches cropped after x number of pixels in the image. The size of the patches can be varied.
+
+In Faster RCNN 9 sizes are used. These sizes are decided upon using a concept of aspect ratios of images and scales . Example: Aspect Ratios =>  1:1, 1:2, 2:1 and Scales  =>  32px, 64px and 128px. Hence 9 shapes.
+
+### Second Major Point
+These shapes are cropped after every 16 pixels in Faster RCNN
+
+We arrive at a number 16 because the VGG Net constructs a feature map which is of 
+
+1. Width = Image_width/16
+2. Height = Image_height/16
+
+Hence,the reason for this is we want every pixel or box in the feature map to represent one anchor position. And each anchor position has 9 values. 
+
+* Thus the feature map with a depth dimension of 9 will represent all anchors.
+
+* Now, we need two target values for each anchor. W want to predict what class that anchor is. Is it a dog, cat etc.
+
+* And we also want to predict what needs to be the modification to the shape of the anchor box to better fit the object.
+
+* For this we need offsets of the anchor height, anchor width and anchor x and anchor y coordinates.
+
+### Calculation of Targets
+
+1. If the anchor has an IOU > 0.7 with a ground truth box, we assign it the class of that ground truth. We also calculated the error coordinates values.
+
+2. IF IOU is < 0.3 , then class is background.
+
+3. Other anchors are ignored
+
+Hence target calculation is done for each and every anchor. 
+
+Now once we have the targets, 
+
+1. only 256 anchors are used to train an RPN in a single batch.
+2. Half of them are background class anchords and other half are foreground.
+
+Now we have the targets ready , to train on this data we use the following structure
+
+### RPN STRUCTURE
+
+1. Apply 3 by 3 conv map with padding 1, to retain same image height and width.
+
+2. Two prediction heads, classification and regression. using 1 by 1 convolution but changing channel depth to 9 (types of anchors for every pixel position)
+
+Softmax + log loss is used for the classification head and Regression loss is calculated using Smooth L1 loss. (description needed ?)
+
+Again, similiar to Fast R-CNN
+
+3. This was trained using a multitask loss which was 
+
+* Loss_of_classification + lambda(loss of regression)
+* lambda switched off and on if the region were background or not respectively.
+
+
+Now after we have arrived at finding good object proposals, we can continue on with the other Fast RCNN steps of
+
+1. ROI Pooling and then
+2. The classification network/regression network ( which is very similiar to RPN ) to find final bounding boxes.
+
+
+Hence we have achieved a full 2 step pipeline that is end to end and fully learnt. This paper was a fundamental breakthrough in deep learning.
+
+### Note
+
+* One question that may come to mind is that why do we need to compute proposals .
+* Why can't be train on all the anchors and use all of them as proposals ?
+
+The reality is that,  that leads to the model not being able to learn as there are way more background anchors than foreground anchors . Leading to the dataset being skewed in the favour of background classes and the model not being able to learn the objects well. 
+
+It would simply predict background for all anchors .
+
+
+
