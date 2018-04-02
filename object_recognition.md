@@ -196,4 +196,10 @@ The reality is that,  that leads to the model not being able to learn as there a
 It would simply predict background for all anchors .
 
 
+### R-FCN Region Fully Convolutional Network
+
+Making the object detection fully convolutional, hence quite a bit faster, but retaining accuracy. 
+
+
+
 
