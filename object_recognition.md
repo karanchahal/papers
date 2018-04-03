@@ -200,6 +200,33 @@ It would simply predict background for all anchors .
 
 Making the object detection fully convolutional, hence quite a bit faster, but retaining accuracy. 
 
+1. So the major improvement of the R_FCN is its attempt to make the whole model fully convolutional.
 
+2. Previosly models had a cropping of the feature map into 7 by 7 and then running that region through a 3by3 conv and 2 1 by 1 convs
+
+3. This lead to substantial time being spent to do that for each ROI
+
+4. In the new model the feature map is underwent through a 1 by 1 conv , therby increasing its dept to k*k*(c+1) size. Where k can be any number, (in the paper k = 7) . c are the number of classes. c+1 because of background class. They try to deal with the problem of balancing traslation variance and invariance.
+
+5. Then this model is taking this feature map. Softmax is calculated directly. So no extra conv layers, leading to better speeds.
+
+6. Byut how does this softmax work. It a modified version of softmax.
+
+7. Here , the ROI is divided into k by k bins. And then the values of each bin ,is calculated by its corresponding feature map (k*k*(c+1)). Hence , this feature map is converted into a c+1 vector. (max/averagepooling on 2 steps. 1st for getting k into k values, then getting their average to get 1 value)
+
+8. Softmax is computed on this and trained with the targets.
+
+9. To calculate the bounding boxes, we take a feature map of depth k*k*4 hence getting a value of 4 to train the targets.
+```
+Meanwhile, our results
+are achieved at a test-time speed of *170ms* per image using ResNet-101, which is 2.5× to 20× faster
+than the Faster R-CNN + ResNet-101 counterpart.
+```
+```
+These experiments demonstrate that this
+method manages to address the dilemma between invariance/variance on translation, and fully convolutional
+image-level classifiers such as ResNets can be effectively converted to fully convolutional object
+detectors
+```
 
 
