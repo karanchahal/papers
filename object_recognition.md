@@ -24,6 +24,16 @@ Faster,  more accurate.
 
 The roadblocks, class imbalance etc.
 
+Need for faster detectors
+
+Training Details.
+
+1.State of the art training (Distributed SGD), model distillation (?)
+
+2.Binary Networks, Mobile Nets, Shuffle Nets to provide very efficient conv bases for running on mobile applications
+
+3.AutoML Advancements in Future Work. 
+
 # Introduction
 
 It all started with 2012 when ALex Krchevsky upublished the AlexNet paper , which attained breakthrough performances in the Image Net challenge for image classification. It was the first time deep neural networks had proved to work amazingly.
