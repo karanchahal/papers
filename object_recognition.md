@@ -117,27 +117,34 @@ Even though Fast RCNN was a huge improvement, still some drawbacks were consiste
 
 To solve the above drawbacks , the authors decided to iterate RCNN framework one more time.
 
-They had identified that the calculation of proposals took a lot of time, Hence they set out to learn how to calculate proposals.
+They had identified that the calculation of proposals took a lot of time, so they decided to replace this method with a better method.
+
+Hence they set out to learn how to calculate proposals by using a neural network , making it signicifantly faster to calculate regions of interests and maybe making it more accurate.
 
 So a major ,milestone in object recognition was achieved called the *Region Proposal Network* . 
-This network learns to calculate effective regions of interest/object proposals.
+This network learns to calculate good quality regions of interest/object proposals.
 
 The model is as follows:
-Taking an input image.
 
-Targets are calculated taking the ground truth bounding boxes and calculating some regions of interest from that data. 
+1. Taking an input image.
 
+2. Targets are the data the model is trained against. 
+
+3. Targets are calculated taking the ground truth bounding boxes and calculating some regions of interest from that data. 
+
+We use these targets to train against, and not the ground target boxes because of : 
 Intuitively we can think of it , as we are making the learning task a litle easier. Instead of predicting the final boxes, we tell the network to predict a large number of plausible boxes.
 
 These target regions proposals are generated with a concept known as anchors.
 
-What are anchors? Anchors are , simply put,  predefined crops of a 224 by 224 image.
+What are anchors? Anchors are , simply put, predefined crops of the input image (224 by 224 )
 
-Think of them as patches cropped after x number of pixels in the image. The size of the patches can be varied.
+More specifically they are patches(of size axb) cropped after x number of pixels in the image. The size of the patches is described below.
 
-In Faster RCNN 9 sizes are used. These sizes are decided upon using a concept of aspect ratios of images and scales . Example: Aspect Ratios =>  1:1, 1:2, 2:1 and Scales  =>  32px, 64px and 128px. Hence 9 shapes.
+In Faster RCNN, 9 types of sizes are used. These sizes are decided upon using a concept of aspect ratios of images and scales . Example: Aspect Ratios =>  1:1, 1:2, 2:1 and Scales  =>  32px, 64px and 128px. Hence 9 shapes.
 
 ### Second Major Point
+
 These shapes are cropped after every 16 pixels in Faster RCNN
 
 We arrive at a number 16 because the VGG Net constructs a feature map which is of 
@@ -145,15 +152,15 @@ We arrive at a number 16 because the VGG Net constructs a feature map which is o
 1. Width = Image_width/16
 2. Height = Image_height/16
 
-Hence,the reason for this is we want every pixel or box in the feature map to represent one anchor position. And each anchor position has 9 values. 
+Hence,the reason for this is we want every grid cell or box in the feature map to represent anchors . And each grid cell position , 9 anchors are cut.  
 
-* Thus the feature map with a depth dimension of 9 will represent all anchors.
+Think of the grid cell as the center pixel point of all these 9 anchors.
 
-* Now, we need two target values for each anchor. W want to predict what class that anchor is. Is it a dog, cat etc.
+* Thus the feature map of 7 by 7 with a depth dimension of 9 will represent all anchors possible in the image
 
-* And we also want to predict what needs to be the modification to the shape of the anchor box to better fit the object.
-
-* For this we need offsets of the anchor height, anchor width and anchor x and anchor y coordinates.
+* Now, we need two target values for each anchor.
+ 1.We want to predict what class that anchor is. Is it a dog, cat etc.
+ 2. And we also want to predict what needs to be the modification to the shape of the anchor box to better fit the object. For this we need offsets of the anchor height, anchor width and anchor x and anchor y coordinates.
 
 ### Calculation of Targets
 
