@@ -239,4 +239,30 @@ image-level classifiers such as ResNets can be effectively converted to fully co
 detectors
 ```
 
+Convolutional Bases
+
+-> Resnet
+-> ResNeXt
+-> Mobile Net (research efficient versions)
+
+
+## Resnet
+
+## ResneXt
+
+The next version of Resnet. Used as the base for the second best entry for ILSVRC
+2016 classification task.
+
+Introduces another dimension called *cardinality*.
+
+Cardinality is the division of a task into n number of tasks. Hence here n is the cardinality.
+
+Here in ResneXT, the major difference is in each block. Each block goes through it's one by one conv as per normal RESNET. But the next step involves splitting these next 128 channels into groups of 32 (cardinality) , hence 4 input channels in each group. A 3 by 3 onv is done here and then the the result is concatenated together and then underwent a one by one conv to preserve channel size. A residual is added to maintain identity mapping.
+
+Also *RESEARCH GROUPED CONVOLUTIONS*
+This extra cardinality dimension results in better features learnt.
+
+## MobileNet v2
+
+
 
