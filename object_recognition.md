@@ -246,6 +246,26 @@ image-level classifiers such as ResNets can be effectively converted to fully co
 detectors
 ```
 
+
+### R-FPN Region Feature Pyramid Network
+
+This paper, introduces an extension to the Faster RCNN framwork.
+
+This extension aims to provde a way to train the model to be robust enough to be able to detect images that are of different sizes and scales. It incorporates a model mechanism that takes variations of images, depending on scale and gets predictions.
+
+### Retina Net
+
+This is a brand new neural network , that brings changes to the loss function. 
+
+The authors pondered on why the single shot detectors were worse than the two step approches. And they found out that they did not fit well because of class imabalance.
+
+What class imbalance means that there is an imbalance between the positive and negative training examples. What happened are the training examples were heavily skewed in the favour of the negative classes. This was becaue in the entirety of the image very few anchors had actual objects in it. 
+
+The two step approach did not have this problem because of the RPN network. Though even in this, it is difficult to find an even number of positive and negative anchors.
+
+To combat this in single shot detectors, the authors came up with a novel loss function which modulates the effect of the loss depending on what class it is predicting. So the loss function sees that if its a negative class label, then it reduces the effect of the loss.
+
+
 Convolutional Bases
 
 -> Resnet
@@ -270,6 +290,10 @@ Also *RESEARCH GROUPED CONVOLUTIONS*
 This extra cardinality dimension results in better features learnt.
 
 ## MobileNet v2
+
+Todo Explain Depthwise Seperable convs
+
+
 
 
 
