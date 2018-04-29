@@ -272,22 +272,24 @@ Convolutional Bases
 -> ResNeXt
 -> Mobile Net (research efficient versions)
 
-## YOLO
+# YOLO
 
-Yolo is an abbrivation for You Only Look Look Once. It's the first of Object Detection techniques mentioned here wherein object detection and classification is encompassed in a single process. 
+Yolo is an abbrivation for You Only Look Look Once. It's the first of Object Detection techniques mentioned here, wherein object detection and classification is encompassed in a single process.
 
-The primary inspiration making YOLO was to make object detection and classification real time. This would require the whole proccess, from decting potential objects to their classification to be completed significantly faster.
+The primary inspiration behind making YOLO was to make object detection and classification real time. This would require the whole proccess, from dection of potential objects to their classification to be completed significantly faster.
+Other region proposed classification models are required to run prediction for each region proposal, which in itself is a time consuming . Elimination of this repitation could make the process much faster.
+Yolo achieves the aforementioned goal of having to run the entire image through the prediction model only once.
 
 It was realised that the most time consuming processs was the involving prediction of bounding boxes. 
 As a solution, a single convolutional network was made to simultaneously predict multiple bounding boxes and the class probabilities associated with each of those boxes. The entire network was a trained as part of the same feedback. 
 
-# Process
+## Process
 
 1. The entire image is devided into a grid of SxS. Each of the grid cells, predicts B bounding boxes.
 2. Each bounding box predicts 5 values: 4 spatial coordinates and Confidence of the object being present in the box. 
    EAch grid also gives out the Class probability of each class. Therefore the predictions are encoded as a SxSx(B*5+C) tensor.
 
-# Advantages
+## Advantages
 1. It's mush faster due to the ealy training pipeline.
 2. It's able to more easily generalize objects.
 3. It implicitley encodes the contextual info about classes and their appearance since it sees the full image. 
