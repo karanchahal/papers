@@ -247,7 +247,7 @@ detectors
 ```
 
 
-### R-FPN Region Feature Pyramid Network
+# R-FPN Region Feature Pyramid Network
 
 This paper, introduces an extension to the Faster RCNN framwork.
 
@@ -271,7 +271,7 @@ Convolution nets have been found out to be quite robust to change in scales and 
 Multi-Scale training is quite resource intensive and takes up to a minute to process an image. This was far from ideal for a real time solution, hence FPN’s . 
 
 
-# The Main Idea
+### The Main Idea
 
 A feature pyramid network leverages the pyramidal structure of a convolutional network, and computes predictions on the various scales that the convolutional feature map goes through, to form the final feature map.
 
@@ -318,7 +318,7 @@ Context modeling: ?
 Stronger data augmentation in SSD ?
 ```
 
-### Retina Net
+# Retina Net
 
 While making these object detection models, single step models always lagged behind two step algorithms. It was understood that the two step models did a better job of finding out regions of interests, while the single step models did not .
 The authors of RetinaNet pondered on why the single shot detectors were worse than the two step approaches. They suggested that they did not fit well because of class imbalance.
@@ -338,16 +338,16 @@ pt = -(1-pt)^ylog(pt)
 The Retina Net architecture is similar with the YOLO Network. The only difference is that, an FPN is added too.
 
 
-Convolutional Bases
+# Convolutional Bases
 
 -> Resnet
 -> ResNeXt
 -> Mobile Net (research efficient versions)
 
 
-## Resnet
+### Resnet
 
-## ResneXt
+### ResneXt
 
 The next version of Resnet. Used as the base for the second best entry for ILSVRC
 2016 classification task.
@@ -361,7 +361,7 @@ Here in ResneXT, the major difference is in each block. Each block goes through 
 Also *RESEARCH GROUPED CONVOLUTIONS*
 This extra cardinality dimension results in better features learnt.
 
-## MobileNet v2
+### MobileNet v2
 
 Todo Explain Depthwise Seperable convs
 
