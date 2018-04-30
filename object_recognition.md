@@ -280,14 +280,50 @@ The primary inspiration behind making YOLO was to make object detection and clas
 Other region proposed classification models are required to run prediction for each region proposal, which in itself is a time consuming . Elimination of this repitation could make the process much faster.
 Yolo achieves the aforementioned goal of having to run the entire image through the prediction model only once.
 
-It was realised that the most time consuming processs was the involving prediction of bounding boxes. 
-As a solution, a single convolutional network was made to simultaneously predict multiple bounding boxes and the class probabilities associated with each of those boxes. The entire network was a trained as part of the same feedback. 
 
 ## Process
 
-1. The entire image is devided into a grid of SxS. Each of the grid cells, predicts B bounding boxes.
-2. Each bounding box predicts 5 values: 4 spatial coordinates and Confidence of the object being present in the box. 
-   EAch grid also gives out the Class probability of each class. Therefore the predictions are encoded as a SxSx(B*5+C) tensor.
+1. The entire image is devided into a grid of SxS
+2. Each of the grid cells, predicts B bounding boxes.
+3. Each bounding box predicts 5 values: 4 spatial coordinates and Confidence of the object being present in the box. 
+   Each grid also gives out the Class probability of each class. Therefore the predictions are encoded as a SxSx(B*5+C) tensor.
+
+4. The class probabilities are Conditional probablities P(Class|Object).
+
+## Network
+The Network Architecture used in YOLO is inspired from the GoogleLeNet model for image classification.
+1. YOLO has 24 convulutional layers, which are used for feature extraction.
+2. 2 fully connected layers, used for the prediction of probabilities and coordinates.
+3. Instead of the Inception Module, 1x1 reduction layer is used to reduce the feature space from preceding layer.
+4. The final layer predicts the bounding boxes coordinates as well as class probabilities.
+5. All layers, except the final layer, which uses a Linear Activation funtion, use Leaky Rectified Linear activation defined by the following -
+```
+f(x) = {x :x>0 , 0.1x :otherwise}
+```
+
+## Loss Function
+Sum Squared Loss function loss function is used because of the relative ease with which it can be optamised. This loss function does come with bundled with the followign drawbacks-
+1. It gives equal weightage to the errors associated with Classification and in finding the bounding the box coordinates(localisation).
+2. Most of the grid cells don't have contain any object. This brings the Confidence score associated with them very close to zero, thus overpowering the gradient from cells that do in fact contain an object.
+
+To resolve the above issues, YOLO increases the loss obtained from bounding box coordinates and decreases the loss from grid cells that don't contain any object in them. This is done using contant mutipliers of λc=5 and λno=0.5 to the loss associated with Bounding box coordinates and Objectless grid cells respectively.
+
+3. The loss fucntion also gives equal importance to errors in small and big bounding boxes. Whereas it's in coherence with common logic that, a small error in a small box should be given importance over the same error in a much larger box.
+
+The following multipart Loss Function is optamised over the enitre training procedure-
+
+[eq for the funct]
+
+
+
+## Training
+1. Darknet framework is used for all training procedures.
+2. 20 Convulutional, an average pooling layer and a fully connected layer are pretrained on the ImageNet 1000-class competition dataset.
+3. The remaining 4 Conv layers along with the 2nd Fully connected layer are added to the model and finally trained to perform detection. 
+4. The network was trained for about 135 epochs on the Pascal VOC 2007 dataset. 
+5. A batch size of 64, momentum of 0.9 and decay of 0.0005 were used throughout the training.
+6. For the first epochs the learning rate was slowly raised from 0.001 to 0.01. It was noticed that if the training started at a high learning rate, the model often diverged due to unstable gradients. Training was continued with 0.01 for 75 epochs, then 0.001 for 30 epochs, and finally 0.0001 for 30 epochs.
+
 
 ## Advantages
 1. It's mush faster due to the ealy training pipeline.
@@ -299,6 +335,7 @@ As a solution, a single convolutional network was made to simultaneously predict
 2. It performs poorly for smaller objects as the image is reduced to a SxS grid.
 3. Since each grid can have atmost B bounding boxes, it performs poorly with many samll objects.
 4. Loss function treats the errors in small bounding boxes and large boxes with the same weightage.
+5. Input resolution is increased to 448x448 from 224x224.
 
 
 ## Resnet
