@@ -271,11 +271,11 @@ Convolution nets have been found out to be quite robust to change in scales and 
 Multi-Scale training is quite resource intensive and takes up to a minute to process an image. This was far from ideal for a real time solution, hence FPN’s . 
 
 
-The Main Idea
+# The Main Idea
 
 A feature pyramid network leverages the pyramidal structure of a convolutional network, and computes predictions on the various scales that the convolutional feature map goes through, to form the final feature map.
 
-# For example in the Resnet, the image goes through 6 scale changes. 224, 56, 28, 14, 7.
+For example in the Resnet, the image goes through 6 scale changes. 224, 56, 28, 14, 7.
 
 There have been approaches to leverage the pyramidal structure of convolutional nets to train a network for robust multi scale detection. But those approaches simply applied a prediction at each feature map. This approach did not consider the high level features that were formed in the smaller feature maps. 
 Feature Pyramid Networks used these high level features to compute predictions , as well as build a feature pyramid.
