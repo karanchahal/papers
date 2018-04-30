@@ -62,7 +62,7 @@ There were 2 steps to this model
 So firstly the model should get good proposals/ regions of interest. This was done with a non deep learning algorithm called selective search. Selective search got x amount of proposals or blobs of an image, then those blobs were cropped out and resized . Then theese resized blobs were fed into the RCNN network,to predict bounding boxes and classes of objects.
 
 
-# Drawbacks
+### Drawbacks
 
 The RCNN neytwork has several drawbacks 
 
@@ -73,7 +73,7 @@ The RCNN neytwork has several drawbacks
 
 3. It was slow, it took approximately 47 seconds to process a singgle image. The bottleneck as observed to be selective search which took 27 seconds on its own.
 
-## Fast RCNN
+# Fast RCNN
 
 To address these concerns, a new version of RCNN called Fast RCNN was made. The major innovation of Fast RCNN was that, it shared the features of a convolutional net and constructed a single step pipeline which trained a multitask loss. 
 
@@ -106,7 +106,7 @@ Hence this sharing of computation resulted in
 2. Speed and Space efficiency (Testing on a single image reduced from 47 seconds to .32 seconds)
 3. Training time reduced substantially ( from 85 hours to 9 hours)
 
-# Drawbacks
+### Drawbacks
 
 Even though Fast RCNN was a huge improvement, still some drawbacks were consistent.
 
