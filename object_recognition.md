@@ -320,15 +320,22 @@ Stronger data augmentation in SSD ?
 
 ### Retina Net
 
-This is a brand new neural network , that brings changes to the loss function. 
+While making these object detection models, single step models always lagged behind two step algorithms. It was understood that the two step models did a better job of finding out regions of interests, while the single step models did not .
+The authors of RetinaNet pondered on why the single shot detectors were worse than the two step approaches. They suggested that they did not fit well because of class imbalance.
+Class imbalance indicates that there is an imbalance between the  number of positive and negative training examples. Training examples were heavily skewed in the favour of the negative classes. This was because in the entirety of the image very few anchors had actual objects in it. Hence background anchors dominated the foreground anchors.
+The two step approach did not have this problem because it found out an even mix of foreground/background anchors to train on with the help of the RPN network. Though even with the RPN, it was difficult to find at the same number of positive and negative anchors.
+RetinaNet is a single step object detector neural network ,that brings changes to the loss function.
+The authors came up with a novel loss function which modulates the effect of the loss depending on what class it is predicting. So the loss function checks that if it’s a negative class label, then reduces the loss if the model predicts a class very confidently. And maintains the magnitude of the loss if the model is not very confident in it’s prediction. 
 
-The authors pondered on why the single shot detectors were worse than the two step approches. And they found out that they did not fit well because of class imabalance.
+The loss function is as follows:
+```
+pt = -(1-pt)^ylog(pt)
+```
 
-What class imbalance means that there is an imbalance between the positive and negative training examples. What happened are the training examples were heavily skewed in the favour of the negative classes. This was becaue in the entirety of the image very few anchors had actual objects in it. 
+(1-pt) gives a high value if pt is not confident in the prediction and a low value if it is. The authors decided to lower the effect of the loss if the model is confident with the prediction. This was done so that the loss is not dominated by easy examples. the extra value y is used to modulate the effect of this down weighting. Generally, y=2 works well in practice.
+-log(pt) is the normal cross entropy loss.
 
-The two step approach did not have this problem because of the RPN network. Though even in this, it is difficult to find an even number of positive and negative anchors.
-
-To combat this in single shot detectors, the authors came up with a novel loss function which modulates the effect of the loss depending on what class it is predicting. So the loss function sees that if its a negative class label, then it reduces the effect of the loss.
+The Retina Net architecture is similar with the YOLO Network. The only difference is that, an FPN is added too.
 
 
 Convolutional Bases
