@@ -253,6 +253,71 @@ This paper, introduces an extension to the Faster RCNN framwork.
 
 This extension aims to provde a way to train the model to be robust enough to be able to detect images that are of different sizes and scales. It incorporates a model mechanism that takes variations of images, depending on scale and gets predictions.
 
+
+Region Feature Pyramid Network (FPN)
+
+
+
+The Feature Pyramid Network (FPN) is a neural network which was constructed to deal with images of different scales. 
+
+Traditionally computer vision algorithms dealt with images of multiple resolutions by constructing a feature pyramid network.
+
+Feature pyramids are representations of an image at different scales. They are called a pyramid as the scale becomes smaller and smaller as we go up, hence the name feature pyramid.
+
+This feature pyramid structure enables a model to detect objects across a large range of scales by scanning the model over both positions and pyramid levels.
+
+Convolution nets have been found out to be quite robust to change in scales and thus good results have been achieved by training on a single scale network. But to achieve the best results, multi scale training was being done. 
+
+Multi-Scale training is quite resource intensive and takes up to a minute to process an image. This was far from ideal for a real time solution, hence FPN’s . 
+
+
+The Main Idea
+
+A feature pyramid network leverages the pyramidal structure of a convolutional network, and computes predictions on the various scales that the convolutional feature map goes through, to form the final feature map.
+
+# For example in the Resnet, the image goes through 6 scale changes. 224, 56, 28, 14, 7.
+
+There have been approaches to leverage the pyramidal structure of convolutional nets to train a network for robust multi scale detection. But those approaches simply applied a prediction at each feature map. This approach did not consider the high level features that were formed in the smaller feature maps. 
+Feature Pyramid Networks used these high level features to compute predictions , as well as build a feature pyramid.
+
+At each scale , the following transformations take place.
+
+```
+The feature pyramid is run through a 1 by 1 conv, to bring the number of channels to 256.We call it A.
+The feature map one level higher , is upsampled by a factor of 2 (nearest neighbour upsampling) , we call it B. This is called a top down pathway.
+A and B are summed together element wise to form C. This is called a lateral connection.
+A 3 by 3 conv net is run through C to get final feature map D.
+```
+
+D is computed for all 4 scales. Hence D1,D2,D3,D4. Predictions are done for all of these 4 feature maps.
+Each lateral connection merges feature maps of the same spatial size from the bottom-up pathway and the top-down pathway. The bottom-up feature map is of lower-level semantics, but its activations are more accurately localised as it was subsampled fewer times. There are no non linearities introduced in these conv nets.
+
+The FPN network can be embedded into current object detector architectures very easily. Now instead of a single feature map, everything is computed keeping multiple feature maps in mind. 
+
+Including FPN in Single Step Object Detectors. 
+
+Architectures like Yolo, Retina Net, RPN can be extended with there FPN very easily.
+ So instead of using a single feature map to run the two convolutional heads of Classification and regression. The heads are run on all the feature maps {D1,D2,D3,D4}
+
+Because the heads slide densely over all locations in all pyramid levels, it is not necessary to have multi-scale anchors. Hence the number of anchors at kept to just the number of aspect ratios. 
+{1:1,1:2, 2:2} are most common. 
+
+The  area of anchors at each level are of area {16, 32, 64, 128, 256}. So in total there are 15 anchors over the pyramid. 
+
+ The parameters of the heads are shared across all feature pyramid levels.This advantage is analogous to that of using a featurized image pyramid, where a common head classifier can be applied to features computed at any image scale.
+
+In Fast RCNN network, the ROI is cropped into a 7 by 7 shape on the feature map level where the classification accuracy was the highest. Two fully connected MLP’s are run through all levels of the feature maps.
+
+FPN’s have been proven to increase accuracies of  existing object detection models with no bells and whistles and have substantially  increased accuracy in detecting small objects.
+
+```
+Iterative regression : ?
+Hard negative mining : finding key negative samples/ anchors (confusing) , then training on these negative samples. Increases examples.
+
+Context modeling: ?
+Stronger data augmentation in SSD ?
+```
+
 ### Retina Net
 
 This is a brand new neural network , that brings changes to the loss function. 
