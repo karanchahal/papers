@@ -410,6 +410,33 @@ The following multipart Loss Function is optamised over the enitre training proc
 5. Input resolution is increased to 448x448 from 224x224.
 
 
+# Yolo2
+
+Yolo 2 made several improvements to Yolo 1
+Key improvements are 
+
+1. Increased Image Resolution. Boost from 224 to 448
+2. Using anchor boxes, decoupling the class prediction and regression heads akak like Faster RCNN
+3. Using K-means to find good anchor scales and aspect ratios.
+4. A new way of predicting offsets to coordinates. Constrains to be closer to the anchor box.
+5. A new classifier, that was deried from Googlenet, which was faster than the VGG counterpart.
+6. More fine grained features. The back bone classifier uses a passthroiugh layer to furthewr bopost the granuarilty of the final feature map by concatenating a 26 by 26 lyer to the 13 by 13 final feature map. This leads to a boost in channel depth.
+7. Multiscale training, images are resized in factors of 32 during training.
+8. Batch normalization to stabilize training, speed up convergence and regularize the model
+
+# Yolo v3
+
+Key improvements
+
+1. Added FPN for multiscale training.
+2. Newer faster conv base
+
+Results
+
+Fastest object detector in the market
+Almost as accurate as RetinaNet in mAP with IOU =0.5, but falls behind with the newer metric average mean AP.
+Has trouble with larger objects now.
+
 ### Resnet
 
 ### ResneXt
