@@ -462,8 +462,8 @@ Todo Explain Depthwise Seperable convs
 # Paper Draft
 
 
-Introduction
-how deep learning has changed the computing landscape
+# Introduction
+## how deep learning has changed the computing landscape
 Deep Learning has revolutionised the computing landscape. It has led to a fundamental change in how applications are being created. Andrej Karpathy, rightfully coined it Software 2.0. Applications are fast becoming intelligent and capable of performing complex tasks. Tasks that were initially thought of being out of reach for a computer. 
 Examples of these complex tasks include detecting and classifying objects in an image, summarising large amount of texts, answering questions from a passage, generating art and beating human players at complex games like Go and Chess.
 The human brain processes large amounts of data of varying patterns. It identifies these patterns, reasons about them, and takes some action specific to that pattern. 
@@ -474,19 +474,19 @@ One such field that has been affected by deep learning in a substantial way is o
 
 
 
-importance of object detection
+## importance of object detection
 Object Detection has some very important applications. A lot of tasks which require human supervision can be automated with a software system that can detect objects in images. Tasks like Surveillance, disease identification and driving can be automated to some extent with  the help of object detection. Humans put in a lot of resources to identify and detect various  phenomenon in the form of human workers. Most of these tasks can be automated by machines with the help of object detection. 
 This technology can also be used very irresponsibly. Military applications come to mind where objects detection can be used to great effect. Hence, inspite of its considerable useful applications, responsibility and care should always be the first thought.
-strides made in object detection, how the object detector has evolved. Faster, smaller ,accurate, more memory efficient.
+## strides made in object detection, how the object detector has evolved. Faster, smaller ,accurate, more memory efficient.
 Object Detectors have been making fast strides in accuracy, speed and memory footprint. Since 2015 , when the first viable deep learning based object detector came out, the field has come a long way.
 The earliest deep learning object detector took 47 seconds to process and image, now it takes less than 30 ms, better than real time. Similar to speed, accuracy has also steadily improved. 
 From a detection accuracy of 29 mAP (mixed average precision), modern object detectors have achieved 43 mAP.
 Also, object detectors have also improved upon their size. Detectors can run well on low powered phones, thanks to the intelligent, conservative design of the models. Support for running models on phones has also helped thanks to frameworks like Tensorflow and Caffe among others. 
 A decent argument can be made that object detectors have achieved close to human parity at object detection.Conversely, like any deep learning model, these detectors are still open to adversarial attacks and can misclassify objects if the image is adversarial in nature.
-future work, talk about saturation in the field now.
+## future work, talk about saturation in the field now.
 Work is being done to make object detectors and deep learning models in general more robust to these attacks. Accuracy , speed and size will constantly be improved upon , but that is no longer the most pressing goal presently. Detectors have attained a respectable quality, that can be put into production today. The goal now would be to make these models robust against hacks and ensure that this technology is being used responsibly.
 
-Object Detection Models
+# Object Detection Models
 
 There have two approaches in constructing object detectors till now. A one step approach and a two step approach.The two step approaches have generally led in accuracy while the one step approaches have been faster and have been more memory efficient.Both these approaches have yielded substantial advancements in the field.
 The one step approach classifies objects in the images in a single step.
@@ -497,17 +497,17 @@ There are always two components to constructing a deep learning model. The first
 The input for these models is an image. The targets are a list of object classes relaying what class the object belongs to and their corresponding coordinates. These coordinates signify where in the image does the object exist. The coordinates are 4 values. The centre x and y coordinates and the height and width of the bounding box. 
 The network is trained to predict a list of objects with their corresponding location.
 The network varies with different detector models. Popular object detection models are described below.
-Two Step Models
-The Region Convolutional Network (R-CNN)
+## Two Step Models
+## The Region Convolutional Network (R-CNN)
 The RCNN Model was the first deep learning object detection model. It is a two step object detector. Two step models have two components. The region proposal model and the object detector model. 
-Region Proposal Model (RPN)
-Input
+## Region Proposal Model (RPN)
+### Input
 The input is the image. 
 A region proposal system finds a set of blobs or regions that have a high degree of possibility of being objects in that image.
 The Region proposal System for  the R-CNN uses a non deep learning model called Selective Search. Selective Search finds a list of regions that it deems most plausible of having an object in them. It takes 27 seconds to run and finds a large number of regions after which the Object Detector step is run. These regions are then cropped from the input image and resized to be fed into the object detector model.
 The Selective Search outputs around ~2k of regions proposals of various scales.
-Object Detector Model
-Input
+## Object Detector Model
+### Input
 The object detector model takes in the region proposals received from the region proposal model. These region proposals are cropped out of the image and resized to a fixed size. In the paper, the authors have used a shape of 7 by 7. These resized regions are fed into the object detector model of the RCNN.
 Targets
 The targets for the RCNN network are a list of class probabilities for each region proposed by the Selective Search. The box coordinate offsets are also calculated , so that the network can learn to better fit the object. Offsets modify the original region’s shape.
@@ -523,24 +523,24 @@ tgy = (y_g - y_a)/h_a
 tgw = log(w_g/w_a)
 tgh = log(h_g/h_a)
 
-Architecture
+### Architecture
 The architecture of the Object Detector Model consists of a set of convolutional and max pooling layers with activation functions . A region from the above step is run through these layers to generate a feature map. This feature map denotes a high level format of the region that is interpretable by the model. The feature map is unrolled and fed into two fully connected layers to generate a 4078 dimensional vector. This vector is then input into two separate small SVM networks. The classification network head and the regression network head.
 The classification head is responsible for predicting the class of object that the region belongs to.The regression head is responsible for predicting the offsets to the coordinates of the region to better fit the object.
-Loss
+### Loss
 There are two losses computed in the RCNN, classification loss and the regression loss. The classification loss is the cross entropy loss and the regression loss is a L2 loss.
 The RCNN uses a multi step training pipeline, to train the network using two losses.
-Model Training Procedure
-The model is trained using a two step procedure.Before training, a pre trained convolutional base from ImageNet is used.
+### Model Training Procedure
+The model is trained using a two step procedure. Before training, a pre trained convolutional base from ImageNet is used.
 The first step includes training the SVM classification head, using the cross entropy loss. The weights for the regression head are not updated.
 In the second step, the regression head is trained with the L2 loss. The weights for the classification head are fixed.
 This process take a long time, approximately 84 hours. This huge time is due to computing features for each region proposal and storing them. The high number of regions take up a lot of space and the IO operations add a substantial overhead.
-Salient Features 
+### Salient Features 
 The RCNN model takes 47 seconds to process an image
 It has a complex multistep training procedure, that involves careful tweaking of parameters.
 Training is expensive for both time and space. The features computed for the dataset take hundred of gigabytes in space and 84 hours are required to train the entire model.
 A more efficient model was needed, but RCNN had provided a good base to iterate upon. It had provided a structure to solve the object detection problem, by breaking the problem into 2 steps. Now these ideas could be iterated upon.
 
-Fast RCNN
+## Fast RCNN
 The Faster RCNN came out soon after the RCNN and was a substantial improvement upon the original model even though the structure remained the same. The Fast RCNN is very similar to the RCNN, in that it uses selective search to find some regions and then runs each region through the object detector network. This network consists of a convolution base and two SVM heads for classification and regression. Predictions are made for the class of that region and offsets to the region’s coordinates in the base image. 
 The RCNN took every region proposal and ran them through the convolutional base. This was quite inefficient as an overhead of running a region through the convolutional base was added for each region proposal. The Fast RCNN aimed to reduce this overhead by running the convolutional base just once. Fast RCNN ran the convolutional base over the entire image to generate a feature map. The regions are cropped from this feature map instead of the input image.This cropping procedure is done using a new algorithm called ROI Pooling.
 Using ROI Pooling, features are shared leading to a reduction in both memory space and time.
@@ -549,7 +549,7 @@ Fast RCNN is more of a speed improvement than a accuracy improvement. It takes t
 The improvements in the model included a single step end to end training pipeline instead of a multi step one and reduced training time from 84 hours to 9 hours. It also had a reduced memory footprint, no longer requiring features to be stored on disk.
 The major innovation of Fast RCNN to achieve this was the sharing of features of a convolutional net and constructing a single step training pipeline which trained a multitask loss instead of a two step training pipeline.
 
-ROI Pooling
+### ROI Pooling
 
 Region of Interest Pooling or ROI Pooling is a algorithm that takes the coordinates of the regions obtained via the Selective Search step and directly crops it out from the feature map of the original image. 
 
@@ -567,17 +567,17 @@ Modern object detectors simply resize the cropped region from the feature map to
 
 Once these regions are cropped, they are ready to be input into the object detector model.
 
-Object Detector Model
+## Object Detector Model
 The object detector is the same detector used for the RCNN. The only change is that the input comes from the ROI Pooling step.
-Input
+### Input
 The object detector model takes in the region proposals received from the region proposal model. These region proposals are cropped using ROI Pooling.
-Targets
+### Targets
 
 Targets are computed for these region proposals in a similar way as the RCNN. Class probabilities and box regression offsets are calculated.
-Architecture
+### Architecture
 The architecture of the Fast RCNN object detector model is very similar to the RCNN. After going through the ROI Pooling step, the cropped regions are run through the convolutional layers and into the two classification and regression SVM heads. The convolutional layers are a set of convolutional and fully connected layers. These layers output a 4078 dimensional vector. This vector is input into the classification and regression heads , similar to the RCNN.
 
-Loss
+### Loss
 A multitask loss used is as follows:
 
 loss_of_classification + alpha*lambda*(loss of regression)]
@@ -590,7 +590,7 @@ Lambda is a weighting factor which controls the weight given to each of these lo
 
 This loss enables joint training.
 
-Model Training Procedure
+### Model Training Procedure
 In the RCNN, training had two distinct steps.The Fast RCNN introduced a single step training pipeline where the classification and regression subnetworks could be trained together using the multi task loss described above.
 
 The network is trained with SGD with a mini batch size of 2 images. 64 random ROI’s were taken from each image resulting in a mini batch size of 128 ROI’s.
@@ -603,7 +603,7 @@ Introduced a simpler single step training pipeline and a new loss function. This
 
 The region proposal step was the bottleneck now, the Fast RCNN reported real time speeds, without the Selective Search.
 
-Faster RCNN
+# Faster RCNN
 
 Faster RCNN came out soon after the Fast RCNN paper. It was meant to represent the final stage of what the RCNN set out to do. It proposed a detector that was learnt end to end. This entailed doing away with the algorithmic region proposal selection method and constructing a network that learnt to predict good region proposals. Selective Search was serviceable but took a lot of time and set a bottleneck for accuracy. A network that learnt to predict higher quality regions would theoretically have higher quality predictions .
 
@@ -614,7 +614,7 @@ The RPN network needed to have the capability of reciting regions of multiple sc
 
 
 
-Anchors
+## Anchors
 
 Anchors are a set of regions of predefined shape and size in an image i.e anchors are simply rectangular crops of the image. The sizes of anchors are of different sizes and aspect ratios. The multiple shapes are decided by coming up with a set of aspect ratios and scales.
 
@@ -626,13 +626,13 @@ The number of pixels after which a new set of anchors would be cropped out are d
 
 Anchors cover each and every region of the image quite well. Faster RCNN uses the concept of anchors to cover all possible regions in an image.
 
-Region Proposal Model
+## Region Proposal Model
 
-Input
+### Input
 
 The input to the model is the input image. The input training data for the model is augmented by using standard tricks like horizontal flipping. Images are of a fixed size, 224 by 224. To decrease training time, batches of images are fed into the network. The GPU can parallelise matrix multiplications therefore it can process multiple images at a time.
 
-Targets
+### Targets
 
 Before going into the details of the architecture of the model, a description of the targets that the network trains against needs to be described.
 
@@ -649,7 +649,7 @@ tgy = (y_g - y_a)/h_a
 tgw = log(w_g/w_a)
 tgh = log(h_g/h_a)
 
-Architecture
+### Architecture
 
 The RPN network consists of a convolutional base similar to the one used in the RCNN object detector model. The convolutional base outputs a feature map. This feature map is fed into two subnetworks. A classification subnetwork and a regression subnetwork.
 
@@ -664,23 +664,23 @@ The cells in the feature map denote the set of pixels out of which the anchors a
 
 Similarly like the classification head , the regression head has a few convolutional layers which generate a regression feature map. This feature map has dimensions w x h x (k*4). The 4 factor is meant to represent the predictions four offset coordinates for each anchor.
 
-Loss
+### Loss
 
 These anchors are meant to denote the good region proposals that the object detector model should further classify on.
 
 The model is trained with simple log loss for the classification head and a new smooth L1 loss for the regression head. There is a weighting factor of lambda that balances the weight of the loss generated by both the heads, that is similar to the Fast RCNN loss.
 
-Smooth Loss equation here
+### Smooth Loss equation here
 
 There loss can be computed across all anchors but the model doesn’t converge. The reason for this is that the training set is dominated by negative/ background examples. To evade this problem, the training set is made by collecting 256 anchors to train on. 128 of these are foreground anchors and 128 are background anchors. Challenges have been encountered keeping this training set balanced. It is an active area of research.
 
-Object detector model
+## Object detector model
 
 
 The object detector model is the same Fast RCNN object detector model. The only difference is that the input to the model comes from the proposals generated by the RPN and not the Selective Search.
 
 
-Loss
+### Loss
 
 There are 4 losses that need to be combined to enable end to end training.
 
@@ -688,12 +688,12 @@ The 4 losses are the classification and regression losses for the RPN , and the 
 
 These losses are combined using a weighted sum.
 
-Faster RCNN Model Training Procedure
+### Faster RCNN Model Training Procedure
 The whole network is trained using a joint approach.
 SGD is used and the model converges in the same time as the Fast RCNN. Images were resized to various shapes to facilitate multi scale training.
 
 
-Salient Features
+### Salient Features
 
 Faster RCNN is faster and has a full neural network pipeline.
 
@@ -708,7 +708,8 @@ There have been various extensions to Faster RCNN network to make it faster and 
 
 To make the Faster RCNN scale invariant, the original paper took the  input image and resized it to various sizes. These images were then run through the network. This approach wasn’t ideal as the network ran through one image multiple times making the object detector less than real time. Feature Pyramid Networks provided a robust way to deal with images of different scales.
 
-Feature Pyramid Networks (FPN)
+
+## Feature Pyramid Networks (FPN)
 
 FPN is a neural network that trains a network to be invariant to scale. 
 
@@ -716,7 +717,7 @@ In the original Faster RCNN, a single feature map was created. A classification 
 
 The regression and classification heads are then run across all of these multi scale feature maps. A good side effect of this is anchors no longer have to take care of scale. They can only represent aspect ratio as the scale is handled by these multi scale feature maps implicitly. 
 
-Architecture
+### Architecture
 
 The FPN model takes in an input image, and runs them through the convolutional base. A modern convolutional base takes the input through various scales, steadily transforming the image to be smaller in height and width but deeper in channel depth. In a ResNet , the image goes through 5 scales; 224, 56, 28, 14, 7 respectively.
 
@@ -736,7 +737,7 @@ FPN’s allowed for invariance in testing and training imagers. Previously, Fast
 
 Now due to the structure of FPN, multi scale testing was done implicitly.
 
-Salient Points
+### Salient Points
 
 New state of the art were set in object detection, object segmentation and classification by integrating FPNs in the pre-existing models.
 
@@ -750,13 +751,13 @@ There is one more bottleneck in the Faster RCNN architecture, when the proposals
 
 Hence the model isn’t fully convolutional. Another paper seeks to optimise this part and hence increase the speed of the model. 
 
-Region - Fully Convolutional Network (R-FCN)
+## Region - Fully Convolutional Network (R-FCN)
 
 This network refactors the Faster RCNN network such that it is fully convolutional. A fully convolution network consists only of convolutional layers with no fully connected layers.
 
 There are several benefits of a fully convolutional network. One of them is speed, computing convolutions is faster than computing a fully connected layer. The other benefit is that the network becomes scale invariant, images of various sizes can be input into the network without modifying the architecture because of the absence of a fully connected layer. Fully convolutional networks first gained popularity with segmentation networks.
 
-Architecture
+### Architecture
 
 The R-FCN model modifies the object detection model in the Faster RCNN. Instead of cropping each ROI out of the feature map. The model  diverges into two heads and modifies the feature map by undergoing a 1 by 1 convolution for each to bring the depth to a size of z_c and z_r for the classification and the regression head respectively.
 
@@ -775,21 +776,21 @@ Vectors are created for the classification head and the regression head. The vec
 
 Hence, a R-FCN modifies the ROI Pooling and does it at the end of the convolutional operations. There is no extra convolution layers that a region goes through, after the ROI Pooling. R-FCN’s share features in a more effective way than a Faster RCNN. Speed improvements are reported while also conserving accuracy.
 
-Salient Features
+### Salient Features
 
 The R-FCN sets new state of the art in speed of two step detectors , achieving a test time speed of 170ms, which was 2.5 to 20x stranger than it’s Faster RCNN counterpart.
 
 The intuition behind it was that this method mangoes to address the dilemma between invariance/variance on translation. Hence fully convolutional classification nets like ResNets can be effectively converted to fully convolutional object detectors.
 
 
-Single Step Object Detectors
+# Single Step Object Detectors
 
 
 Single Step Object Detectors have been popular for some time now. Their simplicity and speed with reasonable accuracy have been powerful reasons for their popularity.
 
 Single step detectors are constructed as a modification of Fast RCNN, they do not have a region proposal step, and directly predict object classes and coordinate offsets.
 
-Single Shot MultiBox Detector (SSD)
+## Single Shot MultiBox Detector (SSD)
 
 This network came out in paper, which boasted state of the art results in detection at the time, while being faster than all the alternatives. The SSD uses a very similar concept as YOLO. In that, it uses anchors to define number of default regions in an image and these anchors predict t the class scores and the box coordinates offsets. A backbone convolutional base (VGG16) was used and a multitask loss was computed to train the network. This loss was very similar to the Yolo/ Faster RCNN loss. It had a smooth L1 loss to predict the box offsets and a cross entropy loss to train for the class probabilities. The major difference in SSD from the YOLO and Faster RCNN architectures was that it was the first model to propose training on a feature pyramid. Leveraging the structure of convolutional layers to go smaller per layer, to form a multi scale pyramid. 
 
@@ -798,7 +799,7 @@ The network was training on n number of feature maps, instead of just one. These
 The SSD network computed the anchors and allowed them to each scale in a unique way. The network, used a concept of aspect ratios and scales. Each point on the network, generated 6 anchors. These anchors varied in aspect ratio. The same point on each feature map, varied in scale. SSD uses this feature pyramid to achieve a very good accuracy, while remaining the fastest detector on the market.
 
 
-You only look Once Detector (YOLO)
+## You only look Once Detector (YOLO)
 
 The YOLO architecture was constructed in the same vein as the Fast RCNN. The image was run through a few convolutional layers to construct a feature map. The concept of anchors was used here too, with every grid cell acting as a pixel point on the original image. The YOLO algorithm generated 2 anchors for each grid cell.
 
@@ -811,7 +812,7 @@ x+1 = number of classes plus background class
 
 A multi task loss is used to train the network end to end. 
 
-Offset Calculation
+### Offset Calculation
 
 Yolo uses a different formulation to calculate offsets. Offsets calculation  in Faster RCNN is done as follows:
 
@@ -846,7 +847,7 @@ b_o = sigmoid( prediction for objectness )
 The new formulation better constrains the prediction to around the anchor box.
 
 
-RetinaNet
+## RetinaNet
 
 The people at FAIR who are the pioneers of modern object detectors came out with a new detector which builds further upon the architecture by introducing a novel loss function. This model is a 1 step detector but boosts state of the art accuracy. 
 
@@ -860,7 +861,7 @@ But conversely, single step detectors densely samples regions from all over the 
 
 Retina Net proposes a dynamic loss function which down weights the loss contributed by easily classified examples. The scaling factor decays to zero when the confidence in predicting a certain class increases. This loss function can automatically down weight the contribution of easy examples during training and rapidly focus the model on hard examples. 
 
-The Object Detector Model
+### The Object Detector Model
 
 RetinaNet uses a simple object detector , deriving from all the best practices found by the above research. 
 
@@ -874,13 +875,13 @@ Hence , the anchors cover a scale range of 32-813 pixels with respect to input i
 
 Each anchor is assigned a set of K object classes (including the background class) and 4 bounding boxes similar to Yolo. The only difference is that there is no “objectness” feature. 
 
-Targets
+### Targets
 
 Targets for the network are calculated as follows. Class Probability Targets are set as 1 for a object class , if the IOU between the ground truth box and the anchor is more than 0.5. It is given a background class if the IOU is less than 0.4 . If the IOU lies between 0.4 and 0.5, that anchor is ignored in training. 
 
 Box regression targets are computed as the offset between each anchor and its assigned ground truth box, no targets are calculated if the anchor belongs to the background class.
 
-Architecture
+### Architecture
 
 The classification and the regression subnets are quite similar in structure. Each pyramid level is attached with these subnetworks, which share weighs across all levels. A small FCN is attached, consisting of 4 convolutional layers of filter size 3 by 3. Each convolutional layer has a RELU attached to it and maintains the same channel size as the input feature map. Finally sigmoid activations are attached to output a feature map of depth A*K. Where A = 9, representing the number of aspect ratios per anchor and K represents the number of object classes.
 
@@ -888,7 +889,7 @@ The box regression subnet is identical to the classification subnet excerpt fro 
 
 The authors claim that a class agnostic box regressor is equally accurate while also having fewer parameters.
 
-Loss
+## Loss
 
 Focal loss is used to train the entire network. This is the major innovation of RetinaNet and what allows it to be much more accurate than its counterparts.
 
@@ -923,7 +924,7 @@ The modulating factor down weights the effect of the loss if the examples are ea
 For example, the loss generated by a example, predicted to be 0.9, will be down weighted by a factor of 100x while a example predicted to be 0.99, will be down weighted by a factor of 1000x.
 
 
-Training and Inference
+### Training and Inference
 
 Training is done using Stochastic Gradient Descent (SGD), with an initial learning rate of 0.01 , which is divided by 10 after 60k examples and and again after 80k examples. SGD is initialised with a weight decay of 0.0001 and a momentum of 0.9. Horizontal image flipping is the only data augmentation technique used. 
 
@@ -933,13 +934,7 @@ Inference is done by running the image through the network. Only the top 1k pred
 
 
 
-
-
-
-
-
-
-Metrics To Evaluate Object Recognition Models
+# Metrics To Evaluate Object Recognition Models
 
 There have been several metrics that the research community uses to evaluate object detection models. These are listed here.
 
@@ -949,7 +944,7 @@ Mixed Average Precision
 Mixed Average Precision describe more
 
 
-Convolutional Bases
+## Convolutional Bases
 
 Modern Object detectors have a convolutional base which computes a feature map. This feature map depicts a high level description of the image. Through a series of convolutions that make the image smaller and deeper, the network aims to make sense of the various shapes in the image. Convolutional Networks form the backbone of most modern computer vision models. 
 
@@ -961,14 +956,14 @@ Accuracy, Speed and Memory. Modern object detectors use the convolutional bases 
 
 A lot of research has gone into making these convolutional nets faster and more accurate. A few popular detectors are described here.
 
-Resnet
+### Resnet
 
 This is an extremely popular convolutional network, made by stacking convolutional layers with a concept called skip connections. Skip connections simply add / concatenate the features of a previous layer to the current layer. It is shown that , by doing this the network propagates gradients much more effectively during backpropogation. Resnets were the state of the art at the time they were released and are still quite popular today. The innovation of introducing skip connections resulted in the capability of training very deep networks without overfitting.
 
 Resnets are usually used with powerful GPU’s as their processing would take substantially more time to do on a CPU. These networks are a good choice for a backbone on a powerful cloud server.
 
 
-Resnext 
+### Resnext 
 
 Resnext networks are a further iteration on the resent by adding grouped convolutions as another dimension to the convolution. Convolutions operate in three dimensions namely, width, height and depth. Resnext brings a new dimension called cardinality. Cardinality espouses dividing a task into n number of smaller subtasks. Cardinality represents the number n. 
 
@@ -978,7 +973,7 @@ A 3 by 3 convolution is done for each of these n groups and the groups are then 
 
 Resnext networks use of these grouped convolutions lead to a better classification accuracy , while still maintaining the speed of a Resnet network. 
 
-MobileNets
+### MobileNets
 
 These networks are a new line of convolutional networks made with speed and memory efficiency in mind. Mobile Nets are used on Lowe power devices like smart phone, embedded systems etc. 
 
