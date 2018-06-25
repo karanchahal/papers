@@ -1,7 +1,7 @@
 
 The RNN reduces the language modeling problem to modeling for the probability for the next word given the preceding words.
 
-Conditional MOdels are similiar to the above approach. Just now a variable x is used as the history for predicting the first word.
+Conditional Models are similiar to the above approach. Just now a variable x is used as the history for predicting the first word.
 
 Hence , x is the condition to the language model.
 
