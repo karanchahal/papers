@@ -72,7 +72,7 @@ To fix this problem, a variant to the Relu was introduced.
 
 ## Leaky Relu
 
-The RELu was modified to solve the zero centered problem.
+The RELU was modified to solve the zero centered problem.
 
 It is given by
 
