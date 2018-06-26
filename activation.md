@@ -64,7 +64,7 @@ Problems
 
 1. If the input is a negative value, no gradient will flow backwards as the gradient of zero is zero.
 
-2. As we're killing the gradient for half the regime, we get about _20%_ of neurons to be __dead relu__ neurons. We get this phenomenon from several potential reasons. If the weights are adjusted in such a way that they will always get a 0 zero value from the relu, and hence a zero value fro gradeints. Hence, the weights will never be tweaked. This dead relu scenario can also happen because of large training rates, with a huge learning rate, the gradients gets knocked off the data manifold space. The other potential reason is bad/unlucky initialisation.
+2. As we're killing the gradient for half the regime, we get about _20%_ of neurons to be __dead relu__ neurons. We get this phenomenon from several potential reasons. If the weights are adjusted in such a way that they will always get a 0 zero value from the relu, and hence a zero value for gradients. Hence, the weights will never be tweaked. This dead relu scenario can also happen because of large training updates, with a __huge learning rate__, the gradients gets knocked off the data manifold space. The other potential reason is __bad/unlucky initialisation__.
 
 3. We still haven't resolved the zero centered problem as the gradients will only be all positive or all negative as the output is only positive or zero.
 
