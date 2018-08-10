@@ -11,6 +11,14 @@ state of the art langauge modelling. It seeks to provide results on a single GPU
 
 # Model features
 
+The model is based upon the model used in Optimising & Reguylarising Language Models. It contains of a 
+
+1. trainable embedding layer
+2. one or more layers of a __stacked recurrent neural network__  (LSTM or a QRNN)
+3. A softmax classifier.
+
+The embedding and softmax classifier utilise shared weights (weight tying).
+
 ## QRNN vs LSTM
 
 QRNNs are a variant on LSTM , they use convolutional networks to process the input instead of the sequentail mechanism of the LSTM.
@@ -29,12 +37,13 @@ relies on a fast element-wise operation. The parallel nature of QRNN makes it pe
 
 ## Adaptive Softmax and Weight Tying
 
-For processing large vocabularies, one bottleneck in speeds is the large softmax multiplication. This is also called the softmax
-bottleneck. To evade this, an adaptive softmax is used. The **adaptive softmax** breaks down the softmax vector into 2 levels.
-The first level is called the short list, it contains the most frequent words in the vocabulary. The second level contains clusters
-of rarely found words.Each of these clusters has a representative token on the short list. 
+For processing large vocabularies, one bottleneck for speed is the large softmax multiplication. This is also called the softmax bottleneck. To evade this, an adaptive softmax is used. 
 
-The intuition is, according to Ziph's Law, most words will require a softmax over the short list. Hence, that expensive softmax will only
-be required rarely. Along with the softmax, another apprach known as **weight tying** is used to facilitate even more memory
-optimisation.
+The **adaptive softmax** breaks down the softmax vector into 2 levels. The first level is called the short-list, it contains the most frequent words in the vocabulary. The second level contains clusters of rarely found words. Each of these clusters has a representative token on the short list. The intuition is, according to Ziph's Law, most words will require a softmax over the short list. Hence, that expensive softmax will only
+be required rarely. 
+
+Along with the softmax, another approach known as **weight tying** is used to facilitate even more memory
+optimisation. The key idea is that since the weight matrices for generating embeddings from the input and the last layer-softmax layer are of the same size, we simply reuse the weight matrix. This simple trick reduces the memory usage by half. 
+
+When a dataset is processed with a small vocabulary, all the words are placed into the short list, thereby reducing the adaptive softmax to a standard softmax.
 
