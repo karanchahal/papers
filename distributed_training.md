@@ -74,8 +74,8 @@ Tensorflow uses a centralized deployment mode. One bottleneck of this is the hig
 
 1.	Efficient Bandwidth utilization with splitting tensors
 To tackle this several methods have been tried
-1.	Gradient Fusion for reducing tensor fragmentation and increased bandwidth utilization
-2.	 A DAG model for scheduling computation and communication tasks.
+1. Gradient Fusion for reducing tensor fragmentation and increased bandwidth utilization
+2. A DAG model for scheduling computation and communication tasks.
 
 
 MIXED PRECISION TRAINING WITH LARS
@@ -87,6 +87,23 @@ Lars proposes using a different learning rate for each layer in the network. Thi
 To use LARS with mixed precision training, we need to convert the weights and gradients back to FP32, apply LARS, then convert them back to FP16 format. 
 
 All reduce algorithm
+
+There are two ways of using SGD for training in a distributed setting- the asynchronous SGD and synchronous SGD.
+
+Synchronous SGD
+
+It is the simplest to understand, synchronous SGD does the following:
+
+1. There are several replicas containing some subset of data and replicas of the machine learning model.
+2. All replicas run the forward and backpropogation step.
+3. All the replicas have their own set of gradients that are computed after the above step.
+4. They send these gradients to the parameter server, where all the gradients and averaged. These gradients are then sent back to each replica.
+5. Each replica then updates it's own set of weights with these global gradients.
+6. The next bach of data is requested and the above process is repeated.
+
+Please note, in a distributed SGD, the mini batch size is the size of the batch per node multipled by the total number of nodes. Hence, when the Distributed SGD takes places, the above steps are analogous to the processing of a mini batch on a single computer.
+
+Using large batch sizes, enable us to 
 
 
 
