@@ -14,7 +14,7 @@ The innovations in single GPU training areas follows:
 2.	Using superconvergence
 3.	Various “faster” optimization algorithms
 
-The Mixed Precision Training Approach with LARS
+The Mixed Precision Training Approach
 
 Write Here
 
@@ -57,6 +57,36 @@ Where S = the throughput of a single machine, N =  Total number of machines and 
 
 If e = 1, linear scaling is achieved. To increase e, more efficient bandwidth utilization is needed. To do that, we need more efficient communication primitives to handle a system of thousands of GPUs.
 
-In this section, we shall talk only about increasing the value of e. To improve e, hybrid all reduce algorithms have shown to report great results. 
+In this section, we shall talk only about increasing the value of e. 
+
+Work being done so far
+The first major work has been done by Goyal et al, who trained Imagenet in an hour using a large mini batch size (~8000). They used a linear scaling rule to adjust the learning rate as a function of mini batch size. They started with a warmup learning rate to overcome early epoch optimization problems. Further research has used larger number of GPU’s with increasing batch size (~32k). The major innovation being the usage of LARS to train the network for large mini batch sizes. But the research has two problems. Either the test accuracy suffers with the usage of more computation resources or the training fails to scale to more GPU’s or nodes. Some techniques that have been tried are listed as follows:
+
+1.	RMSProp warm up
+2.	Batch normalization without moving average
+3.	Slow start learning rate schedule
+4.	Increasing the mini batch size instead of decreasing the learning rate.
+5.	Increasing batch size dynamically with learning rate decay
+
+Advancements in Distributed Training
+
+Tensorflow uses a centralized deployment mode. One bottleneck of this is the high communication cost on the central nodes (Parameter servers). The all reduce algorithm introduced by Baidu is a very important contribution to distributed deep learning. The ring all reduce algorithm greatly reduces the communication load when the number of nodes increase. The challenges of the all reduce are as follows:
+
+1.	Efficient Bandwidth utilization with splitting tensors
+To tackle this several methods have been tried
+1.	Gradient Fusion for reducing tensor fragmentation and increased bandwidth utilization
+2.	 A DAG model for scheduling computation and communication tasks.
+
+
+MIXED PRECISION TRAINING WITH LARS
+
+What is LARS
+
+Lars proposes using a different learning rate for each layer in the network. This local learning rate for eachb layer is calculated by taking the ratio between the L2 norm of weights and L2 norm of the gradients. This quanity is weighted with a LARS coefficient n. 
+
+To use LARS with mixed precision training, we need to convert the weights and gradients back to FP32, apply LARS, then convert them back to FP16 format. 
+
+All reduce algorithm
+
 
 
