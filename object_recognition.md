@@ -2,7 +2,7 @@
 
 The topics are as follows:
 
-1. 2 Step Approaaches
+1. 2 Step Approaches
 2. Single Shot Approaches
 
 2 step approaches can talk about R-CNN, Fast R-CNN, Faster RCNN.
@@ -988,12 +988,3 @@ Depthwise Seperable Convolutions from the backbone of Mobile Nets.
 
 Since then some other small, accurate models constructed for mobile in mind have come out like Effnet, Shufflenet that are quite promising.
 Speed vs Accuracy Comparisons
-
-
-
-
-
-
-
-
-
