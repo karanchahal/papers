@@ -1,3 +1,5 @@
+## Distributed Training
+
 The research on training deep learning models faster is divided into two groups:
 
 1.	Speeding up single machine training.
@@ -75,7 +77,7 @@ To tackle this several methods have been tried
 2. A DAG model for scheduling computation and communication tasks.
 
 
-## MIXED PRECISION TRAINING WITH LARS
+## Mixed Precision Training With LARS
 
 ### What is LARS
 
@@ -127,11 +129,135 @@ Start with a learning rate n, and increase it gradually to k*n where k is the to
 
 Since batch normalization is used, the size of dataset on each machines(n) remains constant with only the number of machines is changed (k). This is because if n isn't constant, the batch normalisation equation becomes quite different ?? (explain better)
 
+### Pitfalls of SGD
+
+1. Scaling cross entropy loss is not equivalent to scaling learning rate. 
+2. Momentum correction is added after changing learning rate.
+3. Average the loss per worker by a factor of kn and then use all reduce, instead of averaging by a factor of n.
+4. Use a single random shuffle over the entire data and then distribute to the k workers.
+
 ### Distribution Primitives
+
+The paper uses k nuber of servers. Each server has 8 GPUs that talk to each other without going through the network.
+
 
 The paper compared two algorithms:
 1. The all reduce (need to research)
 2. The doubling/halfing algorithm (need to research)
 
-They decided to go with the doubling/halfing algorithm because of low time complexity. Also when the graident aggregatioun step is undergone, it is done in paralle to backprop. In other words, if the gradients for a layer has been computated. That gradient is scheduled for the gradient aggregation algorithm to distribute to every other node. 
+They decided to go with the doubling/halfing algorithm because of low time complexity. Also when the graident aggregatioun step is undergone, it is done in paralle to backprop. In other words, if the gradients for a layer has been computated. That gradient is scheduled for the gradient aggregation algorithm to distribute to every other node.
 
+#### Gradient Aggregation
+
+Gradients need to be aggregated once all workers have completed their training step for a batch of data. These gradients are collected and averaged to form the new gradients. These new gradients are sent to each of these workers. This entire process is called the gradient aggregation. 
+
+Gradient aggregation is done using the all reduce algorithm.
+The all reduce algorithm is an algorithm from the field of High Performace Computing. The all reduce algorithm sums the data present on each worker and stores the result on all the workers. This is done in a way that utilises bandwidth efficiently.
+
+##### Interserver communication
+
+1. Recursive Halfing and Doubling Algorithm
+
+2. The bucket (ring algorithm)
+
+
+Parallel Algorithms cost model
+
+Parallel Algorithms are judged upon the following factors:
+
+1. Latency - How much time it takes for a request from one process to another (a + nb) (a = startup  time, b = transfer time per byte, n = number of bytes)
+2. Bandwidth Usage-  How much of the network capacity is being utilised at an instant.
+
+There are two algorthms for all reduce we look into
+
+1. Ring Algorithm
+2. The Halfing and Doubling Algorithm
+
+### Ring Algorithm
+
+Size of data on each machine -> n
+Total number of machines -> p
+The data is broken down into chunks of size n/p, leading to a total  number of chunks to be p. 
+
+
+In the first step, each process i sends data (first chunk) to the process i+1 and recieves data from the process i-1 (the processes are aligned in the shape of a ring). 
+On receiving data, a reduction is performed (in this case addition). 
+
+This process is performed p-1 times, where at every step j, the jth chunk is sent, the jth chunk where p is total number of processes. 
+
+At the end of (p-1) time step, all the machines have the gradients accululated. 
+
+The time complexity and bandwidth complexity is as follows:
+
+t = logp(a + b + y)
+
+This ring algorithm has several nice properties
+
+1. It works for any number of processors.
+
+But there are algorithms where we can decreae the (p-1)A step to a log(p)A using a concept of a tree.
+
+### Halfing Doubling Algorithm
+
+There are two types of messages. Short and Long messages.
+
+For short messages (< 2 KB)
+
+We use the halfing algorithm.
+
+1. First we transfer all the data of process i to process i + 1 bidirectionally. 
+2. After receiving the data, a local reduction is perforomed (sum of the data recieved with process data)
+3. Then in the next step, each process sends data as before to a process i+2 away and the next step i + 4 away, i + 8 away. 
+4. Hence, in logp steps all the data is reduced and stored at every process.
+
+This is great for short messages, as there is no problem transferring this short amount of data.
+
+t = logp(A + B + Y)
+
+But the issue comes when the length of messages is greater than 2kb which is the case with most machine learning applications.
+
+For long messages
+
+A reduce scatter is used , which is then combined with a all gather.
+
+#### Reduce Scatter
+
+A Reduce-scatter is a variant of reduce in which the
+result, instead of being stored at the root, is scattered
+among all p.
+
+1. Each process i, brekas up its data into parts, one for transferring, one for recieving. It then transfers and recieves data from process that is at a distance p/2 from it. 
+2. Once data is received, it performs the local reduction. Now it breaks this recieved data into 2 parts again. One for transfer , one for recieving. It transfers/recieves data from a process that is p/4 distance from it.
+3. This process continues until log(p) steps. Once it is complete, each process has a chunk of the final aggragated data.
+
+The complexity of this algorithm is as follows:
+
+t = alogp + (p-1)n*b/n + (p-1)*p*y/n
+
+Now once the reduce scatter is complete, the all gather is used to gather all this scattered data to all the processes.
+
+#### All Gather
+
+
+The all gather uses a similiar algorithm as the above. But does it in reverse, and instad of the reduction step, it aggregates the data (conncatenates instead of summing).
+
+THis leads to a similair time complexity, but without the Y step, which is thr term used for computation on a single byte
+
+Hence, 
+t = alogp + (p-1)*n*b/p
+
+
+Hence total time complexity for reduce gather +  all gather is:
+
+t = 2alogp + 2bn(p-1)/p + n*(p-1)*y/p
+
+
+##### Note
+
+This is descibed for when the number of machines are a power of 2.
+
+### Todo 
+
+To descibe these algorithms when processes are not a power of two.
+
+#### Binary Blocks Algorithm
