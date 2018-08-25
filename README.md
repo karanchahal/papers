@@ -10,3 +10,9 @@ This repo tracks my notes on the various papers of deep learning I've read
 * Log Loss Explained
 *  Object Detection
 * Word Embeddings
+* Retina Net
+* Yolo
+* SSD
+* Distributed Training
+* FPN
+* Superconvergence
