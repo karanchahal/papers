@@ -283,3 +283,13 @@ Solutions:
 
 1. Backup Workers: Add b extra workers. Take first N updates to gradients, the slowest b worker's gradients will be dropped when they arrive. They used various graphs to explain why they used around 96 workers and 4 backup workers to mitigate stragglers to achieve fastest training time.
 
+### Ideas
+
+Compare between Sync SGD and Async SGD
+what is better in what situation
+Compare between gradient aggregation algorithms. 
+What is better where.
+LARS.
+Large batch sizes.
+Compare using large batch sizes over small batch sizes.
+Compare different ways of using learning rate. LARS, Warm up, linear scaling etc.
