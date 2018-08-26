@@ -261,3 +261,25 @@ This is descibed for when the number of machines are a power of 2.
 To descibe these algorithms when processes are not a power of two.
 
 #### Binary Blocks Algorithm
+
+
+
+
+## Async vs Sync
+
+Async has shown poorer convergence results according to Revisiting SGD paper.
+
+Experiment Async-
+
+40 worker on Inception- 18 layers
+
+1. Test error increases with increased staleness
+2. Restarting training led to better runs
+
+
+Hence, SGD was revisited, the primary limitation of Su=ync SGD was stragglers (or the slowest machines which held up training)
+
+Solutions:
+
+1. Backup Workers: Add b extra workers. Take first N updates to gradients, the slowest b worker's gradients will be dropped when they arrive. They used various graphs to explain why they used around 96 workers and 4 backup workers to mitigate stragglers to achieve fastest training time.
+
