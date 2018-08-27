@@ -293,3 +293,31 @@ LARS.
 Large batch sizes.
 Compare using large batch sizes over small batch sizes.
 Compare different ways of using learning rate. LARS, Warm up, linear scaling etc.
+
+
+# Disadvantages of Sync SGD
+
+1. The transfer of data among machines is quite fast because of ring all reduce primitives, but the issue is with the synchronisation barrier. All the other workers have to wait till the slowest worker to finish to start training the next batch of data.
+
+# Async SGD
+
+Each node asynchronously performs its own gradient updates and occasionally synchronises it's parameters with a central parameter store occasionally. 
+
+Hogwild SGD and DownPour SGD addressed this first. The disadvatage with this is two fold
+
+1. Central point of failure, the serverhas to deal with all these workers sending data to it. Communication throughput is limited by the finite link reception bandwidth of the server. 
+2. Also, there is a possibility of introducing stale gradients. For example, if worker a finshed its batch early and sent new updates to the server, it could be operating on stale gradients. This stale gradients have found to lead to lmiited test accuracy and delays in convergence. 
+
+To solve these problems partially, elastic averaging SGD was introduced. It modifies the stochastic gradient algorithm to achieve faster convergence. Elastic avergaing introduces an elastic force B, which is sued to modify the gradients computes by a small amount. 
+
+The intention is that, this elastic force allows the gradients to explore more local minimas, leading to faster convergence.
+Elastic ASGD is experimentally shown to work faster than vanilla ASGD for the Cifar10 and Imagenet datasets.
+Gossiping SGD, extends the all reduce algorthm by introducing some asyncronosity to it.
+
+Overall the following results were observed:
+
+1. If number of machines is upto 32. ASGD can converge faster than all reduce SGD when learning rate is large. But all reduce converges most consistenally
+2. WHen machines are upto a scale of 100 nodes, all reduce SGD can consistently converge to a higher accuracy solution.
+
+
+ This establishes that the model of asyncrosity is not very compatible with deep learning, according to the paper "How to scale distributed learning ?" 
