@@ -83,7 +83,8 @@ To tackle this several methods have been tried
 
 Lars proposes using a different learning rate for each layer in the network. This local learning rate for eachb layer is calculated by taking the ratio between the L2 norm of weights and L2 norm of the gradients. This quanity is weighted with a LARS coefficient n. 
 
-To use LARS with mixed precision training, we need to convert the weights and gradients back to FP32, apply LARS, then convert them back to FP16 format.
+This was motivated by the observation that the ratio between the norm of tthe weights and gradiets varied widely between different layers during the start of training. This became better once traininng had been ongoing for 5 epochs. 
+
 
 All reduce algorithm
 
@@ -308,7 +309,7 @@ Hogwild SGD and DownPour SGD addressed this first. The disadvatage with this is 
 1. Central point of failure, the serverhas to deal with all these workers sending data to it. Communication throughput is limited by the finite link reception bandwidth of the server. 
 2. Also, there is a possibility of introducing stale gradients. For example, if worker a finshed its batch early and sent new updates to the server, it could be operating on stale gradients. This stale gradients have found to lead to lmiited test accuracy and delays in convergence. 
 
-To solve these problems partially, elastic averaging SGD was introduced. It modifies the stochastic gradient algorithm to achieve faster convergence. Elastic avergaing introduces an elastic force B, which is sued to modify the gradients computes by a small amount. 
+To solve these problems partially, elastic averaging SGD was introduced. It modifies the stochastic gradient algorithm to achieve faster convergence. Elastic avergaing introduces an elastic force B, which is sued to modify the gradients computes by a small amount.
 
 The intention is that, this elastic force allows the gradients to explore more local minimas, leading to faster convergence.
 Elastic ASGD is experimentally shown to work faster than vanilla ASGD for the Cifar10 and Imagenet datasets.
@@ -316,8 +317,7 @@ Gossiping SGD, extends the all reduce algorthm by introducing some asyncronosity
 
 Overall the following results were observed:
 
-1. If number of machines is upto 32. ASGD can converge faster than all reduce SGD when learning rate is large. But all reduce converges most consistenally
-2. WHen machines are upto a scale of 100 nodes, all reduce SGD can consistently converge to a higher accuracy solution.
+1. If number of machines is upto 32. ASGD can converge faster than all reduce SGD when learning rate is large. But all reduce converges most consistentally
+2. When machines are upto a scale of 100 nodes, all reduce SGD can consistently converge to a higher accuracy solution.
 
-
- This establishes that the model of asyncrosity is not very compatible with deep learning, according to the paper "How to scale distributed learning ?" 
+This establishes that the model of asyncrosity is not very compatible with deep learning, according to the paper "How to scale distributed learning ?"
