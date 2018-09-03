@@ -321,3 +321,46 @@ Overall the following results were observed:
 2. When machines are upto a scale of 100 nodes, all reduce SGD can consistently converge to a higher accuracy solution.
 
 This establishes that the model of asyncrosity is not very compatible with deep learning, according to the paper "How to scale distributed learning ?"
+## Introduction
+
+Distributing training of neural networks can be approached in two ways- data parallelism and model parallelism. Data parallelism seeks to
+divide the dataset equally onto the nodes of the system, each node will have a copy of the neural network along with it's local weights.
+Each node operates on it's own set of data and updates it's local set of weights. These local weights are then shared across the network, where 
+the weights of all the nodes are acculumulated in some way to generate a new global set of weights through an accumulation algorithm. These global
+weights are then distributed to all the nodes from whereon the processing of the next batch of data commences. Model parallelism on the other hand 
+seeks to distribute training by splitting up the architecture of the model onto seperate nodes. Alexnet was one of the first models which used
+model parallelism, it divided the network among 2 GPU's to fit the model into memory. Model Parallelism is applicable when the model architecture 
+is too big to fit on a single machine or the model has some parts that can be parallelized, e.g: an Object Detection Network has seperate bounding 
+and class prediction heads whose processing is independent of each other. Generally, most networks can fit on 2 GPU's which limits the amount of 
+scalibility and time savings that can be achieved. Therefore, this paper will primarily focus on data parallelism from now on.
+
+Distributed training algorithms can be roughly classified into types- Asynchronous and Synchronous Stochastic Gradient Descent. 
+Synchronous SGD aims to replicate the algorithm as is in a distributed setting thereby tightly coupling the nodes in the network.
+On the other hand, Asynchronous SGD decouples the nodes from other worker nodes by decreasing their interdependence. In doing so
+it brings fundamental changes to the vanilla version of the algorithm leading to lower quality results. Several modifications 
+to Asynchronous SGD have been proposed to close the accuracy gap between it and Synchronous SGD.
+
+Recent trends have gravitated towards scaling Synchronous SGD to promising results. More specifically, research has gravitated towards
+training networks with large batch sizes. Large mini-batch sizes have a few benefits, the chief one being that SGD over 
+large mini batches allow the model to take bigger steps towards the local minima, hence speeding up the optimisation procedure.
+In practice however, training networks with large batch sizes lead to divergence problems or a "generalisation gap" i.e the
+test accuracy of the network is at times much lower than on a single GPU model. Efforts have been made to enable model training (converge) over
+large batches and have achieved some success. (Imagenet in an Hour) trained Imagenet in an hour by scaling up the batch size to 8,096. A 
+technique called LARS was introduced that allowed the use of batches upto 32k and more recently with a combination of mixed precision training 
+Imagnet was successfully trained in 4 minutes using a batch size of 64k. There have been problems removing the "generalisation gap" among models
+that are trained with large batch sizes and methods like ___________ etc have helped mitigate it to an extent. It is however still an active topic of research. 
+
+There is another important component to Distributed Training which is the communication of data to and fro between nodes, on which a lot of 
+advanced research has already been done thanks to the work of GFS, Hadoop and a number of distributed file systems/databases. Collective 
+Communication Primitives are particularly influential in bringing HPC to deep learning. They allow for a powerful backbone to 
+trasfer gradients to a connected nodes effectively in optimal time. Modern deep learning frameworks like Tensorflow, Pytorch use a primitive 
+called all reduce to share gradients. All reduce has several variants like the Ring All Reduce, Recursive Halfing/Doubling, Binary Blocks 
+Algorithms among others are used in practice. In distributed training, the computation vs communication has to be kept optimal for efficient 
+horizontal scaling. The training remain optimal if the communciation step is as efficient as possible while also synchronising the computation
+of various machines such thast ideally computation is finished at roughly the same time. In slow network conditions, the communication between 
+nodes proves to be the bottleneck. In addition to surveying distributed training we seek to provide a technique to train efficiently on
+slow network conditions. Gradient compression and mixed precision training are promising techniques that can increase overall throughput
+of the network. Recent work (superconvergence) has discovered that using cyclic learning rates can lead to a 10x reduction in the number
+of epochs needed to achive network convergence. Using cyclic learning rates in distributed training is a promising research avenue. 
+
+
