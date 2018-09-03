@@ -329,10 +329,10 @@ Each node operates on it's own set of data and updates it's local set of weights
 the weights of all the nodes are accumulated to generate a new global set of weights through an accumulation algorithm. These global
 weights are then distributed to all the nodes from whereon the processing of the next batch of data commences. Model parallelism on the other hand 
 seeks to distribute training by splitting up the architecture of the model onto seperate nodes. Alexnet was one of the first models which used
-model parallelism, it divided the network among 2 GPU's to fit the model into memory. Model Parallelism is applicable when the model architecture 
-is too big to fit on a single machine or the model has some parts that can be parallelized, e.g: an Object Detection Network has seperate bounding 
+model parallelism by dividing the network among 2 GPU's to fit the model into memory. Model Parallelism is applicable when the model architecture 
+is too big to fit on a single machine or the model has some parts that can be parallelized, e.g: an Object Detection Network has separate bounding 
 and class prediction heads whose processing is independent of each other. Generally, most networks can fit on 2 GPU's which limits the amount of 
-scalibility and time savings that can be achieved. Therefore, this paper will primarily focus on data parallelism from now on.
+scalibility and time savings that can be achieved. Therefore, this paper primarily focuses on data parallelism.
 
 Distributed training algorithms can be roughly classified into types- Asynchronous and Synchronous Stochastic Gradient Descent. 
 Synchronous SGD aims to replicate the algorithm as is in a distributed setting thereby tightly coupling the nodes in the network.
