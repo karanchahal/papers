@@ -361,6 +361,4 @@ of various machines such thast ideally computation is finished at roughly the sa
 nodes proves to be the bottleneck. In addition to surveying distributed training we seek to provide a technique to train efficiently on
 slow network conditions. Gradient compression and mixed precision training are promising techniques that can increase overall throughput
 of the network. Recent work (superconvergence) has discovered that using cyclic learning rates can lead to a 10x reduction in the number
-of epochs needed to achive network convergence. Using cyclic learning rates in distributed training is a promising research avenue. 
-
-
+of epochs needed to achive network convergence thereby making it a promising research avenue in distributed training. This paper is roughly divided into four sections, the first section surveys the existing optimization training algorithms and the second focuses on handling communication across the nodes of the network.The third section explores techniques like gradient compression, mixed precision training and superconvergence for training under low powered devices and slow network conditions. Finally, a section compares the training approaches and selects the optimal training algorithm and communication primitive for different settings ending with future work and a conclusion.
