@@ -326,7 +326,7 @@ This establishes that the model of asyncrosity is not very compatible with deep 
 Distributing training of neural networks can be approached in two ways- data parallelism and model parallelism. Data parallelism seeks to
 divide the dataset equally onto the nodes of the system, each node will have a copy of the neural network along with it's local weights.
 Each node operates on it's own set of data and updates it's local set of weights. These local weights are then shared across the network, where 
-the weights of all the nodes are acculumulated in some way to generate a new global set of weights through an accumulation algorithm. These global
+the weights of all the nodes are accumulated to generate a new global set of weights through an accumulation algorithm. These global
 weights are then distributed to all the nodes from whereon the processing of the next batch of data commences. Model parallelism on the other hand 
 seeks to distribute training by splitting up the architecture of the model onto seperate nodes. Alexnet was one of the first models which used
 model parallelism, it divided the network among 2 GPU's to fit the model into memory. Model Parallelism is applicable when the model architecture 
