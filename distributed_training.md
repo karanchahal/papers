@@ -362,3 +362,16 @@ nodes proves to be the bottleneck. In addition to surveying distributed training
 slow network conditions. Gradient compression and mixed precision training are promising techniques that can increase overall throughput
 of the network. Recent work (superconvergence) has discovered that using cyclic learning rates can lead to a 10x reduction in the number
 of epochs needed to achive network convergence thereby making it a promising research avenue in distributed training. This paper is roughly divided into four sections, the first section surveys the existing optimization training algorithms and the second focuses on handling communication across the nodes of the network.The third section explores techniques like gradient compression, mixed precision training and superconvergence for training under low powered devices and slow network conditions. Finally, a section compares the training approaches and selects the optimal training algorithm and communication primitive for different settings ending with future work and a conclusion.
+
+## Sync SGD
+
+Synchronous SGD is a distributed gradient descent algorithm that is currently the most popular approach to distributing training. It is quite simple to understand. Synchronous SGD works as follows. Nodes on each individual machine compute their gradients on their batch of data. After these gradients are completed, the nodes wait for all the nodes to finish their forward and backward pass. After the synchronization step, the gradients are sent to a master server, where all the gradients are averaged out to form the new set of global weights. These weights are sent out to each machine. After the machines receive their updated set of weights, they are allowed to compute the forward and backpropogation on the next mini batch of data. This whole step is analogous to computing a pass through a mini batch of data. Synchronous SGD is simply the same exact version as would be done with a single machine. Synchrouous SGD has some fallacies however
+\begin{itemize}
+\item Stragglers. In a distributed system, machines can take a long time to return a response, drop a response midway due to network issues or even crash. In such an unpredictable system, the cost of maintaining synchronosity among all the machines is non trivial. A common problem observed are some macchiines which take a long time to provide their gradients, these are also known as stragglers. It has been observed in x that the last 2\% of machines take 94\% more time.
+\item Mainintg tjat synchronosation barrier. In a perfect world all machines will take the same amounfo time to compute their procedure and tetuirn gadients,  but that does not happen in practice. The way the algorthm is decisigned keeps all the nodes very tghtly coupled, resulting in less than idea parallelisibility. Making this graidnet colletion process asynchronous although brings it own set of problems. 
+\end{itemize}
+
+There have been some vvariants to Sync SGD to evade the above problems , and these are:
+
+1. Backup Replicas
+2. Better communication collectives.
