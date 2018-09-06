@@ -366,50 +366,47 @@ of epochs needed to achive network convergence thereby making it a promising res
 
 ### SGD 
 
-Synchronous SGD is a distributed gradient descent algorithm that is currently one of the most popular approaches used to distribute training. 
-Nodes on each individual machine compute gradients on their local batch of data. After gradients are computed for all nodes, each node sends their 
-gradients to a master server where the average of all these gradients is computed to form the final set of graidents for the weight update step.
+Synchronous SGD is a distributed gradient descent algorithm, it is currently one of the most popular optimisers used to distribute training. 
+Nodes in the network compute gradients on their local batch of data after which each node sends their 
+gradients to a master server. After the master has recieved gradients from all the nodes the average of all these gradients is computed to form the 
+final set of gradients for the weight update step.
 The final gradients are used to update the weights using the same formula as the single machine SGD after which the updated weights are sent to
 every node so that the nodes can start processing the next batch of data. This whole procedure is analogous to computing a forward pass and 
-backpropogation step through a single mini batch of data on a single machine. Hence, Synchronous SGD guarentees convergence despite having 
-some fallacies. These fallacies are described as follows:
-
-
+backpropogation step through a single mini batch of data on a single machine.
+Hence, Synchronous SGD guarentees convergence. However, there are some disadvantages of using Synchronous SGD. 
+These fallacies are described as follows:
 
 1. Stragglers. In a distributed system, machines can take a long time to
-return a response. These delays could be due to a variety of reasons. Slow network conditions, failed network requests or machine crashes 
-are all possible failures that are common in a distributed network. In this unreliable network, Synchronous SGD takes a long time to converge.
-(Revisitng Sync SGD) observes that 80% of the second last gradients arrive in under 2 seconds, whereas only 30% of the final gradients do.
-Furthermore, the time to collect the final few gradients grows exponentially, resulting in wasted idle resources and time expended in waiting
+return a response. Slow network conditions, failed network requests, machine crashes or even byzantine errors
+are all possible failures that are common in a distributed network. In this unreliable network, Synchronous SGD due to its tightly coupled nature
+can take a long time to converge. The machines which take a long time to respond are known as stragglers. (Revisitng Sync SGD) observes that 80% of the second last gradients arrive in under 2 seconds, whereas only 30% of the final gradients do.
+Furthermore, the time to collect the final few gradients grows exponentially resulting in wasted idle resources and time expended in waiting
 for the slowest gradients to arrive. A possible solution to this could be to decrease the number of machines. However, it has been observed 
 that reducing the mini batch size increases the total number of iterations required for convergence. It is observed that there is nearly a 
-linear increase in number of iterations as the mini batch size is decreased. A popular approach to this problem is to introduce backup replicas
-that do the same processing as the worker nodes. The gradient aggregation completes when the gradients are received for the first N machines.
+linear increase in number of iterations required as the mini batch size is decreased. A popular approach to this problem is to introduce backup replicas
+that perform the same processing as the worker nodes. The gradient aggregation completes when the gradients are received for the first N machines. The use of backup
+replicas seeks to lower the probability of machine response delay. According to [x],  there is a tradeoff between the number of replicas and the 
+time for convergence. It is observed for a 100 machine cluster, the optimal configuration is to have 96 workers and 4 backup replicas.
 
-2. The other problem with Synchronous Gradient Descent is the synchronization barrier. The synchronization barrier is the amount of time spent
+2. Another issue with Synchronous Gradient Descent is the synchronization barrier. The synchronization barrier is the amount of time spent
 in waiting for all the workers to send their gradients before aggregating them. In practice, this can be quite a long time depending on the
-machine state and network conditions, training is as fast as the slowest worker node. This synchronization barrier can be mitigated to
+machine state and network conditions. Training is only as fast as the slowest stragglers. This synchronization barrier can be mitigated to
 some extent by introducing replicas. A promising area to look into to help allievate this is better communication primitives that utlilize 
-network bandwidth more effectively.
+network bandwidth more effectively. However, these are small hacks that don't solve the problem of the barrier due top the nature Sync SGD is 
+modelled. Asynchronous SGD removes this synchronization barrier, however it brings along a new set of problems that will be explained in the next 
+section.
 
-3. Single Point of Failure. Due to a master slave setup of vanilla SGD, there is a single point of failure with the master. Dean et al addressed
-this by introducing parameter servers which acted as the masters for a subset of worker nodes but a tree like hirerachy lends itself to single
-point failures. Peer to peer communication mechanisms like the all reduce algorithm removes this single point of failure, however they do not 
-solve the synchronization barrier. 
+3. Single Point of Failure. Due to a master slave setup of vanilla SGD, there is a single point of failure with the master. Worker nodes 
+communicate with this master leading to a single point of failure problem. The single point of failure also lends itself to bandwidth problems
+as a high number of machines try to communicate with a common machine at the same time. This can lead to network spikes requiring the master to be a powerful
+machine. Dean et all try to address this by introducing parameter servers which act as the masters for a subset of worker nodes but a tree like 
+hirerachy still lends itself to single point failures. Peer to peer communication mechanisms like the all reduce algorithm removes this single 
+point of failure though it do not solve the synchronization barrier. All reduce has an added benefit of providing better utilisation of 
+network bandwidth than the master slave edition. 
 
+A fault tolerance approach in training with Synchronous SGD has not been addressed in literature as of now to the best of our knowledge.
+Fault tolerance in production deep learning training is managed by systems like Docker, Kubernetes and Spark that use some form of state 
+management and failure recovery although this has not been stated explicitly in the literature before. Currently, the the vanilla all reduce 
+algorithm fails even if a single machine fails.
 
-Synchronus SGD is not fault tolerant in its current state. If a single machine fails in the all reduce algorithm, the process is blocked. 
-If the all reduce uses a bunch of replicas, then it would be great.
-
-drop a response midway due to network issues or even crash. In such an unpredictable system, the cost of 
-maintaining synchronosity among all the machines is non trivial. A common problem observed are some macchiines which take a
-long time to provide their gradients, these are also known as stragglers. It has been observed in x that the last 2% of machines
-take 94% more time. \item Mainintg tjat synchronosation barrier. In a perfect world all machines will take the same amount of time 
-to compute their procedure and return gradients, but that does not happen in practice. The way the algorthm is decisigned keeps all
-the nodes very tghtly coupled, resulting in less than idea parallelisibility. Making this graidnet colletion process asynchronous
-although brings it own set of problems. \end{itemize}
-
-There have been some variants to Sync SGD to evade the above problems and these are:
-
-1. Backup Replicas
-2. Better communication collectives.
+We propose a modification to the all reduce algorithm inspired by the Raft algorithm that allows it to operate in an unstable environment.
