@@ -410,3 +410,31 @@ management and failure recovery although this has not been stated explicitly in 
 algorithm fails even if a single machine fails.
 
 We propose a modification to the all reduce algorithm inspired by the Raft algorithm that allows it to operate in an unstable environment.
+
+
+## Gradient Acculmulation Algorithms
+
+Gradient Accumulation algorithms represent an important component of distributed training systems. These algorithms are responsible for 
+accumulating the gradients from each worker node and after the updated weights are computed, distributing the updated gradients back to the
+worker nodes. The all reduce algorithm makes for a very good fit for this functionality. The all reduce algorithm comes from the world of 
+High Performance Computing (HPC), it offeres the following functionality. If there are n number of machines and each machine has some data with it,
+the all reduce algorithm will perfrom an associative operation on the data from each machine and deposit the resultant value to all the machines in the network. 
+This functionality is useful for SGD as the SGD procedure averages (an associative operation) all the gradients and deposits the updated gradients
+to all the machines, hence making SGD a good candidate to integrate all reduce with. Baidu et al introduced the ring all reduce algorithm to deep learning
+and much research on distributing deep learning training after that has used some form of the all reduce algorithm for gradient distribution
+making it is a staple in deep learning. There are quite a few variants of the allreduce algorithm, these have been decribed in the coming sections.
+This includes our proposed all reduce algorithm coined Tolerant All-Reduce, which is capable of providing fault tolerance in an unstable networking
+environment.
+
+### Ring All reduce 
+
+The ring all reduce works as follows:
+
+
+1. If there are n machines in the network, the data on each machine is divided into n chunks. In the case of gradients, which are simplky vectors.
+ The vectors are divided into n chunks.
+
+2. Each process i sends the ith chunk of its data to the process i+1 and recieves data from the process i-1 (the processes are aligned in the shape of a ring). 
+On receiving this data, a reduction is performed and the new value takes the place of the previous value.
+
+3. 
