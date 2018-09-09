@@ -428,13 +428,26 @@ environment.
 
 ### Ring All reduce 
 
-The ring all reduce works as follows:
+The ring all reduce works by dividing its functinality into two parts.
+The scatter-reduce and the all gather.
+The scatter reduce process is repeated or p-1 steps where p is the number of machines.
+1. Each machine at jth step sends i-j+1 chunk to process i+1 and recivies i- j -1 chunk from process i-1.
+2. When machine gets the value, it performs it's reduction and keeps it as a store.
+3. This process carries on with each machine sending it's reduced from and perfomring reduction with the recieved piece and the original peice to form the new reduced piece.
 
+After the scatter reduce process ends, each machine has a chunk that is part of the final result. Now, th machine simply have to broadvcast their piece of the final chunk to all other machines.
+This is done using the all gather, which is exactly same as the scatter gather, but instead of a reduction on recieving, the piece is simply stored as is, as it is the final result.
 
-1. If there are n machines in the network, the data on each machine is divided into n chunks. In the case of gradients, which are simplky vectors.
- The vectors are divided into n chunks.
+The all gather process is repeated or p-1 steps where p is the number of machines.
+1. Each machine at jth step sends i-j+1 chunk to process i+1 and receives i- j -1 chunk from process i-1.
+2. When machine gets the value, it performs it stores the value.
+3. This process carries on with each machine sending it's stored value until p-1 steps.
 
-2. Each process i sends the ith chunk of its data to the process i+1 and recieves data from the process i-1 (the processes are aligned in the shape of a ring). 
-On receiving this data, a reduction is performed and the new value takes the place of the previous value.
+Hence, the network latency of this ring all reduce algorithm is 2*(p-10) or log(P). The ring all reduce algorithm is quite popular and is in use in production systems like Tensorflow and Caffe. 
+It's advantages are as follows:
+1. Efficient Use of Network Bandwidth. Machine are always sending a chunnk of data from their machine to another machine. So no machines are idle.
+2. Peer to peer approach ensures that there is no ingle point of failure. However, the ring algorithm does not take into account failure scenarios.
 
-3. 
+Disadvantages
+1. The process takes O(N) time, the algorithms we will study later have log(N) complexity.
+2. Not fault tolerant, if a single machine fails, the whole procedure will need to be started again.
