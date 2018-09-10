@@ -505,10 +505,25 @@ hence the scalibility of the program with respect to the total number of machine
 
 ## Binary Blocks Algorithm
 
+The binary blocks algorithm is an extension to the recursive distance doubling and vector halfing algorithm as it seeks to lower the degree of load imbalance for when the number of machines are not a power of 
+two. In the original algorithm for the non power of two case, a number of machines are set aside until the algorithm completes its execution, after which the resultant vector is transfered to these machines. 
+This apprach leads to a large number of machines being left idle in some cases, for example, if there was a cluster of 600 machines, 86 machines would be left idle while the processing executes on the 512 machines.
+Hence, there is a significant load imbalance encountered in the network using this approach. 
+
+The binary blocks algorithm seeks to alliviate this problem by dividing the number of machines into blocks of power of twos. As an example, if we have a 600 machine cluster, there will be 4 groups having 2^9, 2^6, 2^4, 2^3
+machines respectively. The binary blocks algorithm works as follows:
+
+1. Each block executes the scatter-reduce procedure of the recursive distance doubling and vector halfing algorithm with the machines in it's block. After every block finishes its scatter reduce 
+procedure, the machines in the smallest block send their reduced final chunk data to the machines of the block that is next in line in the size hierarchy. This data is reduced with the corresponding data
+on the machines on the bigger block. 
+
+2. This data transfer and reduction after the scatter reduce execution is continued up until the data has reached the biggest block. 
+3. After the scatter reduce and transfer of data between all blocks has been completed, the reversal of the same process is started to distribute the final vector to all machines (the all gather procedure).
+4. Starting from the biggest block, data is sent down to the smaller blocks, alongside the data transfer for the all gather procedure in their own block. Once a block gets data from the bigger block, it starts 
+   it's own all gather procedure and data transfer to the block below .This process goes down the block hierarchy until the all gather process completes on all the blocks.
+
+The time complexity of the binary block algoriothm is 2logP + 2nB, the load balance depends on the amount of data transfer between machine inter block. This algoroithm doesn't completely solve the load 
+imbalance problem as there is a high tranfer of data between blocks whihc is imbalanced. However, it has been observed that the binary blocks algorithm workswell even for 8+4 and 16+8 making it a good alternate 
+for clusters with non power of two number of machines.
 
 
-After running this algorithm, each machine has a chunk of the final vector
-
-
-What length of messwges does it work well for ?
-For power of two algorithms ?
