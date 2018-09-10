@@ -451,3 +451,64 @@ It's advantages are as follows:
 Disadvantages
 1. The process takes O(N) time, the algorithms we will study later have log(N) complexity.
 2. Not fault tolerant, if a single machine fails, the whole procedure will need to be started again.
+
+## Recursive Distance Doubling and Vector Halfing Algorithm 
+
+The recursive distance doubling and vector halfing algorithm works using 4 different primitives, that used in the algorithm. These are given as follows:
+
+1. Recursive Vector Halfing - The vector is halfed at each time step
+2. Recursive Vector Doubling - Small pieces of the vector scattered across processes are recursively gathered to form a large vector
+3. Recusrsive Distance Halfing - The distance between machines is halfed with each communication iteration.
+4. Recursive Distance Doubling - The distance between machines is doubled with each communication iteration.
+
+Similar to the ring algorithm, the all reduce algorithm is made up of two procedures, the scatter-reduce and the all gather. The difference between this algorithm and the ring algorithm is in how these procedures
+perfrom the operation. The scatter reduce for recursive distance doubling and vector halfing algorithm runs for log(P) steps, where P is the number of processors. 
+
+Let's assume that P is a power of two.
+
+1. Machine i communicates with machine i + p/b, where b = 2 in the first step and is multiplied by 2 on each new step. 
+2. This communication between 2 machines happens as follows, machine i divides it's vector into two parts. One part is for sending and the other is for receiving and reducing on. For example, machine 1 could use the top half of the vector to send, and the bottom part to recieve and reduce on, then the second machine will use the opposite configuration.
+3. Hence, after data is recieved from the counterpart process. The received data is used to reduce the original data, now, this new data is used for vector halfing in the next step. Hence, in the next step when 
+distance between machines is p/4, the data thast is divided into half now is the reduced data from the previous step. Hence, the distance is doubled and the vector is halfed at each step.
+
+If P is not a power of two, the algorithms is slightly modified by doing the following, the largest power of two less than P is calculated P`. 
+We calculate r = P -P`, then we take the first 2r machines and do the following:
+
+1. The even machine communicate with the odd machines, hence machine i (where i is even) commuincates with machine i+1. 
+2. Both these machines, exchange data such that the even machines have the reduced vector of both the two machines.
+3. Now, these even machines are used along with the last r machines in the recursive distance doubling and vector halfing algorithm given above with the odd machines in the first 2r machines not being used in the rest of the 
+procedure.
+
+The above algorithm makes sure that the recursive distance doubling and vector halfing algorithm operates on a power of two number machines because the even machines + r is always a power of two.
+
+Once the reduce scatter process is complete, each machine has 1/pth sized chunk which is part of the final resultant vector. To bradcast these chunks on every machine the all gather collective proimitve is used.
+The all gather primitive gathers/combines dasta from each machine and broadcasts the resultant vector to each machine. The all gather for recursive distance doubling and vector halfing algorithm runs for log(P) steps,
+where P is the number of processors. It communicates in the exact opposite way as the scatter reduce
+
+1. Machine i communicates with machine i + p/b, where b = 2^log(P) in the first step and is divided by 2 on each new step. 
+2. This communication between 2 machines happens as follows, machine i divides it's vector into two parts. The reduced/final chunk is meant for sending and the data that is recieved is meant to replace the data that 
+was there previously.
+
+3. In the next step, the vector to be sent is the combination of the recieved chunk and the sent chunk, this is known as vector doubling, the vector doubles in size after every communication iteration.
+4. This process continues on by doubling the vector asize and halfing the disgtance between machines until log(P) steps. It is the exact reverse of the scatter reduce process, and continues on until each machine has the final resultant vector. The time complexity for this algorithm is the same as the scatter-reduce.
+
+After the end of the all gather, all machines have the resultant vector signaling the end of the all reduce process. The final complexity to the entire algorithm is 2alogP + 2nB where a is the startup time 
+per message, where B is the transfer time per byte and n is the number of bytes transferred. We shall ignore the reduction procedure complexity as that is independent from communication between machines. Hence, the 
+final complexity is 2alogP + 2nB. For non power of two processes, the time complexity is 2alogP + a + 3nB. If the number of machines are not a power of two, after the all reduce ends, the resultant vector needs
+to be sent to the odd numbered machines which were not used in the process. This results in an overhead of a + nB.
+
+Advantages
+1. The complexity of this operation is reduced from 2aP + 2nB to 2alogP + 2nB, reducing the complexity of the algorithm from O(N) time to O(logN) time.
+Disadvantages
+1. When the number of machines are not a power of two, a substantial overhead can be introduced as the number of machines (the first 2r odd numbered machines) are left unused during the all reduce process,
+hence the scalibility of the program with respect to the total number of machines is reduced. A binary blocks algorithm reduces this overhead.
+
+## Binary Blocks Algorithm
+
+
+
+After running this algorithm, each machine has a chunk of the final vector
+
+
+What length of messwges does it work well for ?
+For power of two algorithms ?
