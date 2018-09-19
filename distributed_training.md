@@ -527,3 +527,30 @@ imbalance problem as there is a high tranfer of data between blocks whihc is imb
 for clusters with non power of two number of machines.
 
 
+
+# LARS
+
+Using the linear scaling of learning rate rule proposed by (FAIR) allowed for training the Resnet model with a batch size of 8K, the intuition behind this
+approach was that since a constant number of epochs is used , the number of iterations to train a model with a large batch size
+is significantly less than that of a model trained with a smaller one. A large learning rate was proposed to accomodate for these small number of iterations. 
+This makes sense, however in practice training tends to diverge for large learning rates. It is also observed that using
+larger batch sizes results in lower validation accuracies. As an example, the accuracy for Alexnet for a batch size of 4,000 dips to 53.1% from the baseline (B=256) 
+of 57.6. Increasing the batch size to 8,000 further dips the test accuracy to 44.8%. On applying batch normalisation to Alexnet, there is a significant 
+improvement in accuracy closing the gap to only 2.2% from the previous 14% for a batch size of 8,000.
+
+The authors of (LARS) proposed using different learning rates for different layers of the neural network since it was observed that the ratio
+between the norm of the weights to the norm of the gradients is different for different layers. 
+For example, in the Alexnet model, the ratio for the first conv layeris 5.76 while the ratio for the last fully connected layer is 1345. 
+The following formula was used to generate a different learning rate for each layer.
+
+The different learning rates are generated according to the ratio of the norm of weights and the norm of gradients for that layer,if that ratio is large, 
+a high learning rate is computed. This correlates with the observation that layers at the end of the network learn faster than those at the beginning.
+Hence, the learning rates are modified throughoput the training of the model according to what rate the layer is learning at that moment.
+
+The usage of LARS resulted in allowing training for batch sizes upto 64,000 with minimal loss in accuracy. A small accuracy gap is still observed 
+but that can be alliviated by simply training for more number of epochs. The accuracy gap is attributed to the fact that the stochastic gradients 
+calculated over a large mini batch match the true gradients very closely. This can theoretically be challenegd by using the 1cycle policy proposed
+by Leslie Smith. Although the 1cycle Policy has been proposed for single GPU training, it can easily be brought into the distributed scenario.
+
+
+
