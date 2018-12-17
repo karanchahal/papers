@@ -2,17 +2,17 @@
 
 The research on training deep learning models faster is divided into two groups:
 
-1.	Speeding up single machine training.
-2.	Speeding up distributed training (multiple machines)
+1. Speeding up single machine training.
+2. Speeding up distributed training (multiple machines)
 
 We shall look into both of these techniques in detail.
 
 Single Machine Training
 
 The innovations in single GPU training areas follows:
-1.	Mixed precision training method
-2.	Using superconvergence
-3.	Various “faster” optimization algorithms
+1. Mixed precision training method
+2. Using superconvergence
+3. Various “faster” optimization algorithms
 
 ## The Mixed Precision Training Approach
 
@@ -228,8 +228,7 @@ result, instead of being stored at the root, is scattered
 among all p.
 
 1. Each process i, brekas up its data into parts, one for transferring, one for recieving. It then transfers and recieves data from process that is at a distance p/2 from it. 
-2. Once data is received, it performs the local reduction. Now it breaks this recieved data into 2 parts again. One for transfer , one for recieving. It transfers/recieves data from a process that is p/4 distance from it.
-3. This process continues until log(p) steps. Once it is complete, each process has a chunk of the final aggragated data.
+3. This process continues until log(p) steps. Once it is complete,each process has a chunk of the final aggragated data.
 
 The complexity of this algorithm is as follows:
 
@@ -240,13 +239,11 @@ Now once the reduce scatter is complete, the all gather is used to gather all th
 #### All Gather
 
 
-The all gather uses a similiar algorithm as the above. But does it in reverse, and instad of the reduction step, it aggregates the data (conncatenates instead of summing).
+The all gather uses a similiar algorithm as the above. But does it in reverse, and instad of the reduction step, it aggregates the data (concatenates instead of summing).
 
 THis leads to a similair time complexity, but without the Y step, which is thr term used for computation on a single byte
 
-Hence, 
-t = alogp + (p-1)*n*b/p
-
+Hence, t = alogp + (p-1)*n*b/p
 
 Hence total time complexity for reduce gather +  all gather is:
 
@@ -445,9 +442,43 @@ The all gather process is repeated or p-1 steps where p is the number of machine
 
 Hence, the network latency of this ring all reduce algorithm is 2*(p-10) or log(P). The ring all reduce algorithm is quite popular and is in use in production systems like Tensorflow and Caffe. 
 It's advantages are as follows:
-1. Efficient Use of Network Bandwidth. Machine are always sending a chunnk of data from their machine to another machine. So no machines are idle.
+1. Efficient Use of Network Bandwidth. Machine are always sending a chunk of data from their machine to another machine. So no machines are idle.
 2. Peer to peer approach ensures that there is no ingle point of failure. However, the ring algorithm does not take into account failure scenarios.
+3. This algorithm is independent of number of machines. It oesnt change when machines are odd or even. 
 
 Disadvantages
 1. The process takes O(N) time, the algorithms we will study later have log(N) complexity.
 2. Not fault tolerant, if a single machine fails, the whole procedure will need to be started again.
+
+
+## Recursive Halfing and Doubling Algorithm
+
+This algorithm is similiarly divides into two parts, the scatter reuce and all gather. The scatter reduce algorithm works as follows:
+
+1. Machine i exchanges data to machine i + p/2 (the machines are aligned as a ring). Upon receiving the data, the data is reduced and stored. 
+2. The next step, involves the same procedure as above but now exchange of data takes place between i and i + p/4. 
+
+This process is great with small data, but with large data, an efficient network bandwidth algorithm is needed.
+
+A Reduce-scatter is a variant of reduce in which the
+result, instead of being stored at the root, is scattered
+among all p.
+
+1. Each process i with it's counterpart, breaks up its data into parts, one for transferring, one for recieving with the counterpart using the opposite configuration. Transfer of data and reductions take place with machine distance p/2 from it.
+2. This process continues until log(p) steps. Once it is complete,each process has a chunk of the final aggragated data.
+
+This procedure continues on until log(P) steps. At the end of this process, each machine has a chunk of the final result.
+
+The complexity of this algorithm is as follows:
+
+t = alogp + (p-1)n*b/n + (p-1)py/n
+
+The all gather uses a similiar algorithm as the above. But does it in reverse, and instad of the reduction step, it aggregates the data (conncatenates instead of summing).
+
+THis leads to a similair time complexity, but without the Y step, which is thr term used for computation on a single byte
+
+Hence, t = alogp + (p-1)nb/p
+
+Hence total time complexity for reduce gather + all gather is:
+
+t = 2alogp + 2bn(p-1)/p + n*(p-1)*y/p
