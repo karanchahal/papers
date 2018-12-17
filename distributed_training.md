@@ -450,7 +450,7 @@ Disadvantages
 1. The process takes O(N) time, the algorithms we will study later have log(N) complexity.
 2. Not fault tolerant, if a single machine fails, the whole procedure will need to be started again.
 
-<<<<<<< HEAD
+
 
 ## Recursive Halfing and Doubling Algorithm
 
@@ -483,107 +483,3 @@ Hence, t = alogp + (p-1)nb/p
 Hence total time complexity for reduce gather + all gather is:
 
 t = 2alogp + 2bn(p-1)/p + n*(p-1)*y/p
-=======
-## Recursive Distance Doubling and Vector Halfing Algorithm 
-
-The recursive distance doubling and vector halfing algorithm works using 4 different primitives, that used in the algorithm. These are given as follows:
-
-1. Recursive Vector Halfing - The vector is halfed at each time step
-2. Recursive Vector Doubling - Small pieces of the vector scattered across processes are recursively gathered to form a large vector
-3. Recusrsive Distance Halfing - The distance between machines is halfed with each communication iteration.
-4. Recursive Distance Doubling - The distance between machines is doubled with each communication iteration.
-
-Similar to the ring algorithm, the all reduce algorithm is made up of two procedures, the scatter-reduce and the all gather. The difference between this algorithm and the ring algorithm is in how these procedures
-perfrom the operation. The scatter reduce for recursive distance doubling and vector halfing algorithm runs for log(P) steps, where P is the number of processors. 
-
-Let's assume that P is a power of two.
-
-1. Machine i communicates with machine i + p/b, where b = 2 in the first step and is multiplied by 2 on each new step. 
-2. This communication between 2 machines happens as follows, machine i divides it's vector into two parts. One part is for sending and the other is for receiving and reducing on. For example, machine 1 could use the top half of the vector to send, and the bottom part to recieve and reduce on, then the second machine will use the opposite configuration.
-3. Hence, after data is recieved from the counterpart process. The received data is used to reduce the original data, now, this new data is used for vector halfing in the next step. Hence, in the next step when 
-distance between machines is p/4, the data thast is divided into half now is the reduced data from the previous step. Hence, the distance is doubled and the vector is halfed at each step.
-
-If P is not a power of two, the algorithms is slightly modified by doing the following, the largest power of two less than P is calculated P`. 
-We calculate r = P -P`, then we take the first 2r machines and do the following:
-
-1. The even machine communicate with the odd machines, hence machine i (where i is even) commuincates with machine i+1. 
-2. Both these machines, exchange data such that the even machines have the reduced vector of both the two machines.
-3. Now, these even machines are used along with the last r machines in the recursive distance doubling and vector halfing algorithm given above with the odd machines in the first 2r machines not being used in the rest of the 
-procedure.
-
-The above algorithm makes sure that the recursive distance doubling and vector halfing algorithm operates on a power of two number machines because the even machines + r is always a power of two.
-
-Once the reduce scatter process is complete, each machine has 1/pth sized chunk which is part of the final resultant vector. To bradcast these chunks on every machine the all gather collective proimitve is used.
-The all gather primitive gathers/combines dasta from each machine and broadcasts the resultant vector to each machine. The all gather for recursive distance doubling and vector halfing algorithm runs for log(P) steps,
-where P is the number of processors. It communicates in the exact opposite way as the scatter reduce
-
-1. Machine i communicates with machine i + p/b, where b = 2^log(P) in the first step and is divided by 2 on each new step. 
-2. This communication between 2 machines happens as follows, machine i divides it's vector into two parts. The reduced/final chunk is meant for sending and the data that is recieved is meant to replace the data that 
-was there previously.
-
-3. In the next step, the vector to be sent is the combination of the recieved chunk and the sent chunk, this is known as vector doubling, the vector doubles in size after every communication iteration.
-4. This process continues on by doubling the vector asize and halfing the disgtance between machines until log(P) steps. It is the exact reverse of the scatter reduce process, and continues on until each machine has the final resultant vector. The time complexity for this algorithm is the same as the scatter-reduce.
-
-After the end of the all gather, all machines have the resultant vector signaling the end of the all reduce process. The final complexity to the entire algorithm is 2alogP + 2nB where a is the startup time 
-per message, where B is the transfer time per byte and n is the number of bytes transferred. We shall ignore the reduction procedure complexity as that is independent from communication between machines. Hence, the 
-final complexity is 2alogP + 2nB. For non power of two processes, the time complexity is 2alogP + a + 3nB. If the number of machines are not a power of two, after the all reduce ends, the resultant vector needs
-to be sent to the odd numbered machines which were not used in the process. This results in an overhead of a + nB.
-
-Advantages
-1. The complexity of this operation is reduced from 2aP + 2nB to 2alogP + 2nB, reducing the complexity of the algorithm from O(N) time to O(logN) time.
-Disadvantages
-1. When the number of machines are not a power of two, a substantial overhead can be introduced as the number of machines (the first 2r odd numbered machines) are left unused during the all reduce process,
-hence the scalibility of the program with respect to the total number of machines is reduced. A binary blocks algorithm reduces this overhead.
-
-## Binary Blocks Algorithm
-
-The binary blocks algorithm is an extension to the recursive distance doubling and vector halfing algorithm as it seeks to lower the degree of load imbalance for when the number of machines are not a power of 
-two. In the original algorithm for the non power of two case, a number of machines are set aside until the algorithm completes its execution, after which the resultant vector is transfered to these machines. 
-This apprach leads to a large number of machines being left idle in some cases, for example, if there was a cluster of 600 machines, 86 machines would be left idle while the processing executes on the 512 machines.
-Hence, there is a significant load imbalance encountered in the network using this approach. 
-
-The binary blocks algorithm seeks to alliviate this problem by dividing the number of machines into blocks of power of twos. As an example, if we have a 600 machine cluster, there will be 4 groups having 2^9, 2^6, 2^4, 2^3
-machines respectively. The binary blocks algorithm works as follows:
-
-1. Each block executes the scatter-reduce procedure of the recursive distance doubling and vector halfing algorithm with the machines in it's block. After every block finishes its scatter reduce 
-procedure, the machines in the smallest block send their reduced final chunk data to the machines of the block that is next in line in the size hierarchy. This data is reduced with the corresponding data
-on the machines on the bigger block. 
-
-2. This data transfer and reduction after the scatter reduce execution is continued up until the data has reached the biggest block. 
-3. After the scatter reduce and transfer of data between all blocks has been completed, the reversal of the same process is started to distribute the final vector to all machines (the all gather procedure).
-4. Starting from the biggest block, data is sent down to the smaller blocks, alongside the data transfer for the all gather procedure in their own block. Once a block gets data from the bigger block, it starts 
-   it's own all gather procedure and data transfer to the block below .This process goes down the block hierarchy until the all gather process completes on all the blocks.
-
-The time complexity of the binary block algoriothm is 2logP + 2nB, the load balance depends on the amount of data transfer between machine inter block. This algoroithm doesn't completely solve the load 
-imbalance problem as there is a high tranfer of data between blocks whihc is imbalanced. However, it has been observed that the binary blocks algorithm workswell even for 8+4 and 16+8 making it a good alternate 
-for clusters with non power of two number of machines.
-
-
-
-# LARS
-
-Using the linear scaling of learning rate rule proposed by (FAIR) allowed for training the Resnet model with a batch size of 8K, the intuition behind this
-approach was that since a constant number of epochs is used , the number of iterations to train a model with a large batch size
-is significantly less than that of a model trained with a smaller one. A large learning rate was proposed to accomodate for these small number of iterations. 
-This makes sense, however in practice training tends to diverge for large learning rates. It is also observed that using
-larger batch sizes results in lower validation accuracies. As an example, the accuracy for Alexnet for a batch size of 4,000 dips to 53.1% from the baseline (B=256) 
-of 57.6. Increasing the batch size to 8,000 further dips the test accuracy to 44.8%. On applying batch normalisation to Alexnet, there is a significant 
-improvement in accuracy closing the gap to only 2.2% from the previous 14% for a batch size of 8,000.
-
-The authors of (LARS) proposed using different learning rates for different layers of the neural network since it was observed that the ratio
-between the norm of the weights to the norm of the gradients is different for different layers. 
-For example, in the Alexnet model, the ratio for the first conv layeris 5.76 while the ratio for the last fully connected layer is 1345. 
-The following formula was used to generate a different learning rate for each layer.
-
-The different learning rates are generated according to the ratio of the norm of weights and the norm of gradients for that layer,if that ratio is large, 
-a high learning rate is computed. This correlates with the observation that layers at the end of the network learn faster than those at the beginning.
-Hence, the learning rates are modified throughoput the training of the model according to what rate the layer is learning at that moment.
-
-The usage of LARS resulted in allowing training for batch sizes upto 64,000 with minimal loss in accuracy. A small accuracy gap is still observed 
-but that can be alliviated by simply training for more number of epochs. The accuracy gap is attributed to the fact that the stochastic gradients 
-calculated over a large mini batch match the true gradients very closely. This can theoretically be challenegd by using the 1cycle policy proposed
-by Leslie Smith. Although the 1cycle Policy has been proposed for single GPU training, it can easily be brought into the distributed scenario.
-
-
-
->>>>>>> fd0df48411541fc3779429a8e7caa9ee4e811b8b
