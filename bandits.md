@@ -4,7 +4,7 @@ Reinforcement Learning __evaluates__ the action taken, instead of __instructing_
 a simple version of the n armed bandit problkem is studied.
 
 
-## N-Armed Bandit Problem 
+## N-Armed Bandit Problem
 
 The problem is given as follows.
 
