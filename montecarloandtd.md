@@ -62,4 +62,3 @@ Uses some values to select and evaluate. If values are estimated then we will be
 ## Importance Sampling
 
 When we are using different distribution, we can get the weighted sum for an action in the policy pi by using imporatance sampling metric.
- 
