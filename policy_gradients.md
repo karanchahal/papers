@@ -45,7 +45,7 @@ We want a policy that has a high value.
 
 In episodic environments, I want a policy that gives high reward from start state.
 
-In continuing envs we can use the average value. 
+In continuing envs we can use the average value.
 Define a distribution over states,
 
 Policy based reinforcement learning is an optimsation problem. Find a policy that maximises reward. We will focus on gradient ascent aand is easy to use for deep nets.
