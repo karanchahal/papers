@@ -166,3 +166,98 @@ T(n) <= 2.T(n/2) + c.n
  Exercise: T(n) < = T(n/3) + T(2n/3) + n, what is ther solution to this recurrance, as long as two sizes are 
  comparable. 
  
+ 
+ ## Fourier Transform Divide and Conquer
+ 
+ let n = 2^k
+ theta = 2pi/n
+ w = e^(i2(pi)/n) (complex n^(th) root of unity)
+ w^(n) = 1 ( = e^(i2pi) = 1)
+ 1, w, w^2, ....w^(n-1), 1, .......
+ 
+The above is a circle. 
+
+WHat is fourier tranforms, takes a seq of n numbers, get new seq of n numbers.
+
+How does new differ from old seq.
+
+What is the use of fourier algos ? just know it is important. It is so useful that the whole algo is actually implemented in hardware. 
+
+#### Defination:
+A = (a0, a1, a2.... a(n-1) ), its F.T (fourier transform)
+is a seq B = FT(A) = (b0, b1, b2 .... b(n-1))
+
+B = (Some matrix) * A
+entry of matrix i,j (row, col) = w^(ji) : (w = omega)
+
+Hence, b0 = a0 + a1+ a2..... + a(n-1)
+b1 = a0 + a1w + a2w^(2) + ..... + a(n-1)w^(n-1)
+b2 = a0 + a1w^(2) + a2w^(4) + .... + an-1w(2(n-1))
+
+
+Can also be eval in a polynomial eqn:
+
+Pa(x) = a0 + a1x + a2x^(2) + ....a(n-1)x^(n-1)
+
+FT(A) = Pa(1) + Pa(w) + Pa(w^2) +..... Pa(w^(n-1))
+
+Hence FT is finding out this polynomial of a set of points.
+
+
+#### O(nlogn) Algo: 
+A = (a0, ..... a (2n -1))
+
+B = (a0, a2, a4,....a(2n-2)) = b...
+C = (a1, a3, ....., a(2n-1)) = c...
+
+FT(A)j = a0 + a1w^(j) + a2w^(2j).... (a2n-1)w^((2n-1)j)
+split into odd and even terms
+ = b0 + b1w^(2j) + ... + w^(j) + w^(j)(c0 + c1w^(2j))
+ = 
+ FT(A)j = FT(B)(jmodn) + w^(jmodn)FT(C): (j mod n is minor point as ft cycles around) ("merging procedure")
+ 
+ This is called Fast Fourier Transform.
+
+Application fo Fast Fourier transform:
+1. Detecting periodicity. 
+2. Compression
+
+
+Polynomial Multiplication in O(nlogn) time.
+P(x) = a0 + a1x + a2x^(2)...an-1x(n-1) +... 0
+Q(x) = b0 + b1x + ....b(n-1)x^(n-1) + .... 0
+R(x) = P(x)* Q(x) = r0 + r1 +.... r2n-1x^(2n-1)
+
+
+Fact: A poly of degree <= 2n-1 is *uniquely* determined by its values at 2n distinct points.
+
+F.T of sequence of length 2n 
+Using F.T evaluate (P(1), P(w)...., P(w^(2n-1)))
+Using F.T evaluate (Q(1), Q(w)...., Q(w^(2n-1)))
+
+Since R = P * Q;
+S  = R(1), R(w)...... R(w^(2n-1))
+
+
+S = FT(r0, r1, ...r2n-1)
+R = FT_inverse(S)
+
+FT is same as FT_inverse, but in the latter w is replaced by w_bar.
+
+Exercise: Verify the follwoing, product of 2 matrices
+[...wij...] * [....w_bar_ij...] = n*[identity matrix]
+
+Cool thing is we can multiply polynomials in O(nlogn) time !
+
+
+Theorum: Any (comparsion based) sorting algorithms must make Omega(nlogn):
+
+Whatever algo we have, make a "decision tree". eventually we end up at a leaf to get sorted array. 
+leaves are n!, approx 2^(nlogn)
+Decision tree is binary.
+Hence as num of leaves is X = 2^height,
+
+Hence, height of decision tree is nlogn.
+These are called lower bound results.
+
+Its generally extremely difficult to prove lower bounds.
