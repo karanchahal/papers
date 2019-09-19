@@ -379,4 +379,4 @@ Earliest start time first
  
  Let S = {i1...im} is set of disjoint intervals that include i1, i2 ... i_m. 
  
- 
+ Follows: hence l=m, because algo terminated in l steps.
