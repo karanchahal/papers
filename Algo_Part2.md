@@ -261,3 +261,122 @@ Hence, height of decision tree is nlogn.
 These are called lower bound results.
 
 Its generally extremely difficult to prove lower bounds.
+
+
+# Greedy Algorithms
+
+- Seq of choices
+- Each choice is (what appears to be) the "best" at that step
+- It works sometimes. Not on every problem
+- The emphasis is on **Proof Of Correctness**
+- Polynomial Running Time
+
+#### Example with toy examples
+Given n items with values, b1,b2,b_n. 
+Find a subset of S of k items with max value. 
+
+Algo: "without loss of generality" we can assume after sortingb1> b2>...bn
+: outpouts set S = {b1,,....bk}
+
+### Proof: "Exchange Argument"
+To prve that the choice we make is the correct choice, 
+say for example we pick b1, and say b1 is the correct choice, and we can make a precise statement by saying
+that an optimal set contains b1. 
+Let ``` S` ``` be the optimal "hypothetical" set.
+We must show thst b1 belongs to ``` S` ```. 
+If not, then bi belongs to ``` S` ```, i > 1 be an arbitrary element.
+Then S = S* \ {b1} U {b1} witll have value > value(S) which is a contradiction.
+If b1 is not in the optimal set, and something is say b17, then we just swap it and the condition still holds. 
+
+### More Complicated Example. 
+
+Same question but this time coins have weights, so thief csn only carry only so much. 
+
+Check whether items are divisible or not divisible. (name self obvious)
+
+##### Case of divisible items
+
+
+**Be greedy according to the criteria !**
+Choosing right criterion is part of designing 
+
+Here, be greedy with value per unit of weight = (value/weight)
+
+##### Case of indivisible items
+It like a gold cup/silver spoon, we can not turn it into powder and take powder to it. 
+This is an NP hard problem, meaning that there is no polynomial time algorithm for this
+We don't expect to find one, although it is an innocent looking problem. 
+It is not easy to say what has fast/slow algorithms.
+Thinkn aout greedy according to what criteria. 
+There is always a brute force algorithms
+
+
+
+## Interval Scheduling
+
+-------- -------- -------- --------
+  --------    --------
+Maximum intervals we can pick that arr paisrwise disjoint (non intersecting)
+- Given n internvals i_th: [start, finish]
+- Goal is to find maximum sized subset of non intersecting intervals. 
+- Solution need not be unique.
+
+Shortest job first
+-------- --------
+       ----
+Nope
+
+Earliest start time first
+------------------------
+ ----- ----- ------ Nope
+ 
+ Minimum Conflicts First: See counter example in [KT]
+ This is also not good, thinking of counter example is still non trivial
+ 
+ Algorithm:
+ - Earliest finish time first
+ - After sorting, let's assume that
+    f1 <= f2 <= f3... <= fn 
+ - At each step - pick interval with earliest/least finish time
+ - Delete all intervals that overlap with.
+ - Stop when no intervals remain.
+ 
+ Proof: What intervakls we are choosing are "correct"
+ 
+ Usually done with induction and exchange argument. 
+ 
+ Lets prove that this algo makes correct choice in first step. 
+ That is let m = maximum # of disjoint intervals possible.
+ We want to prove that there is a set S of m disjoint intervals
+ 
+ such that [s1, f1] is part of this set S. that f1 is part of this set.
+ "this is all hypothetical !"
+ Always be sure your first step is not shooting yourself in the foot !
+ 
+ Proof: let O (optimal) = {j1,...j_m} be indices of m disjoint intervals. 
+ without loss of generality: --- --- --- --- ...  ---
+ then we can say that if the first element does not have finsih time less than f1,
+ hence we can simply replace it with f1. 
+ 
+ Now we have proved that the choice was good for only the first choice. 
+ Hence, we need to make the actual claim that m is the maximum number.
+ 
+ BUt we need some care to write a statement, to see if this first proof carries forward.
+ 
+ Claim: Let j1,j2,...jl be indices of intervals chosen by algo (i1 = 1)
+ Prove l == m which we cant do 
+ 
+ For every k between 1 and l:
+     So we prove hat there exists a set S of m disjoint intervals such that this holds:
+     - Up to every step, the algorithm was right
+     - the intervals {i1,....ik} is contained in S. 
+ 
+ Proof: (Inductive)
+ - We will assume that the above is the case for step upto k.
+ - Prove that this holds for k+1. 
+ - There is a set O of m disjoint intervals such that the first k ones are contained in O.
+ So we do thge same ting to get k+1 as before
+ 
+ Let S = {i1...im} is set of disjoint intervals that include i1, i2 ... i_m. 
+ 
+ 
