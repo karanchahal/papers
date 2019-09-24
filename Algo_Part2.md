@@ -380,3 +380,126 @@ Earliest start time first
  Let S = {i1...im} is set of disjoint intervals that include i1, i2 ... i_m. 
  
  Follows: hence l=m, because algo terminated in l steps.
+
+
+# Greedy Algorithms
+
+## Minimum Spanning Tree
+## Graph
+- We are talking abot Undirected G(V, E). 
+Simple path: No reptition of vertices, walk allows repitition
+Cycle - start at vertex and come back to the vertex, that wouls be a cycle.
+
+Connectedness
+Induced subgraph: Set of vertices, take all the edges of those vertices.
+
+## Tree
+Tree: Graph which is connected and has no cycles. T(V,E)
+
+Theroum: If tree has n vertices. The number of edges is exactly n-1 edges. 
+
+Spanning Tree: Given a graph G(V,E) it's spanning tree is a subgraph T(V,E') 
+such that T is a tree. Given tree and graph are undirected.
+
+There can be many spanning trees.
+
+## Minimum Spanning Tree
+Goal is to build a subgraph that is a spanning tree, which minimises the toal cost of the sum of edges given we have a cost for each edge. 
+
+Problem: Given G(V,E) cost Ce >= 0  (each edge cost is positive) for each e belongs to E, e = (u,v)
+
+To find a spanning tree T so as to minimise cost(T) = Sum_of(cost of all e)
+
+# Algo to find minimum spanning tree (undirected graph, positive edge costs)
+
+Algorithm:
+1. Begin by sorting edges in increasing order. e1,.....em
+2. Assume that these edges are arranged in increasing order by their costs c1,.....cm
+3. Start with graph G', same vertices as G but with no edges.
+4. For i = 1,2..m:
+    if e_i does not intrduce a cycle in G'
+    add e_i to G', other wise throw out this edge.
+5. Final output will be graph G_prime. and sum of all edgs: cost of that edge.
+
+Theorum G' is a MST. This might not be unique
+
+Proof of Correctness:
+How do we show ,
+
+In greedy algos, we have to show that the choices up to a certain point are correct.
+
+
+There is a MST T such that e1 belongs to T
+### Proof:
+
+"The Exchange Argument": 
+If edge e1 doesn't belong in T, 
+then maybe let's try to add e1 and see what the picture looks like.
+
+Let T' be MST (a hypothetical one)
+- If edge e belongs to T', done T=T'
+- Else edge doesn't belong to T'
+
+Then draw dotted line to add edge to T'.
+Then since we have a cycle now, we will need to drop an edge,
+
+now we can remove an edge, and it will something not equal to e1 andf the overall cost of T' will be even smaller than below.
+
+Hence, that is the proof.
+
+Then T = has (T' \ e_j) U {ei} is a spanning tree. 
+
+cost(T) = cost(T') - c_j +ci <= cost(T') . c_j >= ci
+
+Therefore T is also MST and ei belongs to T. 
+
+(The non uniqueness of a MST comes from edges having a different cost)
+
+Claim: Let A_i denote frist i edges e1,,,e_i }
+
+and let Si = set of edges among {e1...ei} that the algo chose to include
+0<= i <= m.
+
+Then there exists a minimum spanning tree T such that T intersect A_i = S_i
+
+## Proof by Induction
+
+by induction i = 0 t intersect empty = empty.
+
+assume there exists a MST T' such that T' intersect Ai = Si
+
+Now for i+1, we need to show that our choice is consistent with T'.
+
+Lets look at edge e_(i+1)
+
+**Case1**: e(i+1) Union S_i has a cycle. hence e(i+1) does not belong to S_i
+e(i+1) doesn't belong to T' either, as since it intruduces cuycle with S_i, it will introduce cycle with T' too.
+
+Hence T' intersectoin = S(1+1)
+take T=T', T interests A(i+1) = S(i+1)
+
+
+MOre tirckeier case is **case 2**
+
+ei+1 Union S_i doesnt introduce cycle. 
+
+Sub case 1: e(i+1) belongs to T' done (easy case)
+            T = T' ,  T union A(i+1) = S(i+1)
+Sub case 2 e(i+1) doesnt belong to T' (tricky case)
+- hence T' Union ei+1 contains a cycle C. 
+
+- This cycle is not poart of S_i+1 but is is part of the Tree T'. 
+Hence Cycle must contains an edge e_j that is part of the tree T'
+
+THE PUNCH LINES:
+Therefore this edge is an edge whose index is more than i+1. This is an edge which the algo hasnt seen so far
+this is because this tree T' is completely consistent with first i decisions. If algo had seen i before and thrown it out, then tree T' wont contain it either.
+
+There j > i+1.
+So t' intersect Ai = S_i
+
+Hence C_j >= C_(i+1) . hence, T = (T' \ ej) Union e(i+1) is a MST
+
+such that T INtersect Ai+1 = Si+1.
+
+Consider i =m,, There exists MST T = Sm (what algo outputs.)
