@@ -503,3 +503,150 @@ Hence C_j >= C_(i+1) . hence, T = (T' \ ej) Union e(i+1) is a MST
 such that T INtersect Ai+1 = Si+1.
 
 Consider i =m,, There exists MST T = Sm (what algo outputs.)
+
+This si Kruskul's Algorithm
+# Minimum Spanning Tree
+
+G(V,E), |V| = n, |E = m
+
+## Runtime:
+Sort : mlogn (as m is between n and n^2), hence it's mostly the same thing ?
+
+After sorting, take edges one by one, hence making a "forest" of edges.
+n components, then these components will merge into each other. 
+
+We need a dats structure to maintain connected components.
+And the ops for this data structure are :
+Given pair of vertices, the data structure should be able to tell you if these two components fall into distinct or same
+components. 
+" And if they belong to the different components, can they be merged together ? "
+
+This data structure can take logn time per step.
+
+hence this 2nd step takes O(mlogn)
+
+Hence totoal running time: O(mlogn)
+
+## Union Find Algorithm
+(cover on your own)
+Instead of logn it takes O(log*n), you start with n, the number of time we reduce n to get constant time. ??
+
+Inverse_Akerman_Function(n)
+
+## Interval Partitioning
+
+It's a scheduling problem. Scheduling jobs on machine is one analogy. 
+- Given jobs Intervals.. start time and finsih time per interval. 
+Goal is to schedule these jobs on to k machines, so that job scheduled on any machine are disjoint.
+Goal is to minimise k.
+
+Have d = depth, maximum number of jobs alive at any time instant. 
+
+### Algorithms
+Sort intervals according to start time, such that s1, s2 are in increasing order. 
+
+Take d machines and
+for j equals 1,2...n:
+schedule the job Ij on any machine that is available. 
+
+### Proof Of Correctness
+Its a proof by contradiction,
+
+if machine gets stuck, then it contradicts the assumption that d was the depth.
+Hence that is is the proof. 
+
+Suppose on the contrary that Ij cannot be scheduled. 
+____________ Ij
+
+1
+2
+3
+.
+.
+.
+d _______________
+
+
+morover, the jobs already there, their start time must be less than Ij.
+Ik1...Ikd start earlier than Ij and this employs that the depth is >= d+1,
+which is a contradiction. 
+
+### Running Time. 
+nlogn, sort intervals:
+
+
+## Dynamic Programming
+
+- Recurrqnce Relation + "memoization" - (keeping in memory or remembering)
+
+Or one can think of it making a list of subproblems, and solves them all (systematically).
+
+## fibonacci NUmbers
+
+current value of Vi is addition of Vi-1 and Vi-2
+
+Compute nth Fibonacci number. 
+
+Easy efficent algo: Compute F0,F1... place them, them in order, and solve them left to right. 
+Difficult Recursive Inefficient Algo: 
+Fib(n) {
+ if n == 1: return 1
+ if n == 0: return 1
+ 
+ a = Fib(n-1)
+ b = Fib(n-2)
+ 
+ return a+b
+}
+
+This is very ineffient as it does repeat stuff, it is exponential in time. ( (1 + root(n))/2 )^n
+
+
+- Only n+1 distinct subproblems F0,,,,,Fn
+- Store solution to every sub problem which was solved, use that solution whenever needed. 
+
+
+It is important to think in recursion.
+
+
+## Dynamic Programming Strategy
+
+3 step process
+
+1. Identify a list of problems, that we want to solve. Keep careful to keep this list to polynomial size. That includes the original problem. 
+2. Identify order among these subproblems. Smaller to larger, left to right...
+3. Finally, identify a "recurrance relation" or way that computes solution to a sub problem given solution to its own subproblems.
+
+
+Algo is iterative, compute solution to all sub problems in order -->.
+
+Emphasis on getting polynomial time running algorithm. 
+
+
+## Subset Sum (1st Dynamic Programming Problem)
+Subset Sum with Bounded Integers
+
+### Problem
+
+Given positive integers a1,....an where each ai <= W , where W is polynomial so think of W = n^2.  (if this is not the case, problem is NP Hard.)
+Given 1 <= b <= nW.
+
+Find if there's a subset of these integers which sum exactly to b. 
+
+
+Sub problems:
+
+SUBSETSUM({aK,....aN}, B): 1<= k <= n ; i <= B <= nW
+
+= { True if there is some suffix ak..an such that suim ==B
+= { False, otherwise.
+
+num of subproblems = n*nW = n^4, so it's polynomial, we're good. 
+
+Identify order of sub problems:
+
+SUBSETSUM({Ak,...An}, B) = SUBSETSUM({Ak+1,..An}, B) | SUBSETSUM({Ak+1,....An}, B- aK)
+
+
+
+
