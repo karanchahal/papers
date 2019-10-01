@@ -647,6 +647,50 @@ Identify order of sub problems:
 
 SUBSETSUM({Ak,...An}, B) = SUBSETSUM({Ak+1,..An}, B) | SUBSETSUM({Ak+1,....An}, B- aK)
 
+### problem 
 
+Chain Matrix Multiplication
+Compute Time  = O(pqr)
+
+
+If we have Apq, Bqr , Crs matrices.
+Matric Multiplication is associative. 
+
+The compute time is different if we multiply ABC like A(BC) or (AB)C.
+
+(A1q Bq1 C1q) = (AB)C = A(BC) but compute time of first is better than second. 
+
+
+Given matrices A1,....An where sizes match for multiplication. Goal to find the product with least compute time.
+
+
+Flip problem around, we're thinking of first step, but try to think about last step.
+
+Think about where we want to cut in tyhis sequqence, where we need to multiply the left and right resultant matrices.
+to get the final matrix, hence we are done.
+ONce we get this , we can recur on left and right, and do the same problem. 
+
+Hence the num of subsequences are O(n2) as we have a left and right end point and we have consecutive subsequences.
+
+cost(Ai....Aj) = Minimal cost of multiplying this consective subsequences. 
+- original problem i =1, j=n;
+- cost(Ai) = 0
+- cost(Ai*Ai+1) = PiPi+1Pi+2.
+
+
+Recursion:
+min(cost(Ai...Ak) + cost(Ak+1,,,,Aj) + PiPk+1Pj+1) {i <=k < j}
+
+Another Toy Example
+
+## Finding Longest Common Subsequence. 
+X = AGTCGCAG
+Y = GATACCA
+
+So at any instance, take one char from X and one from Y. 
+Then, uif two are equal, we can remove both and add to length of subsequnce
+or remove any one of X and Y and move forward.
+
+Hence as they are prefixes, then pick the maxmim of these three possiblities, and move forward. 
 
 
