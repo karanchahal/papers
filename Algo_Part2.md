@@ -693,4 +693,90 @@ or remove any one of X and Y and move forward.
 
 Hence as they are prefixes, then pick the maxmim of these three possiblities, and move forward. 
 
+## Weighted INterval Scheduling Example
 
+Given intervals, and each interval has weight, fnd disjoint intervals such that total value is max. 
+
+The recurrance formula is 
+
+given sorted intervals according to start time,
+
+then opt(t) (optimal time(t)) = max{ .opt(t+1), vt + opt(k), where k is minimum finish < start }
+
+
+## Shortest Paths in Directed Graphs
+
+Directed graph
+- v denotes vertices
+- e denotes directed edges
+
+There are notions of paths and cycles. 
+
+Edges have costs >= 0
+S: source, t: target
+
+Observation:
+n = number of vertices, m = number of edges
+
+1. Least code s to t path has at most n-1 edges. 
+
+2. if there si a shortest path s to y with y, z in between, then it must be the shortest path from s to y and s to w. 
+
+subproblems:
+
+Subproblem of every vertex u belongs to V
+0<=i<=n-1
+opt(s,u,i) = lenght of shortest s to u path using at most i edges. 
+
+opt(s,u,i) = min( w : (w,u) belongs to edges E (opt(s,w,i-1) + cwu))
+
+Ordering: order according to increasing value of i.
+
+opt(s,u,0) = {INFINITY if u different from s, or 0 otherwise}.
+
+Same algo works if there are no negative cost cycles.
+
+
+## Finding Independent Sets in Graphs
+
+NO two adcant vertices constitute an independent set, 
+
+Given a tree, find maximum sized independent set. Let's assume it is a rooted tree with no loss in generality. 
+
+Choose a set of vertices which have no edges in between them. 
+
+max_sum(r) = { 1 + sum(max(sumgrandchildofr)), max(sum(childrenofr)) }
+
+terminating condition, if we come on leaf then just take it.
+
+order of problems: according to decreasing r ?
+
+
+
+
+## Amortized Analysis
+
+- Data structures - technique to evaluate data structures. 
+
+- Data structures: add , delete, min, update
+
+n operations:
+
+Let T = total running Time over n operations. 
+
+- A-A shows is that example, T(n) <= nlogn, but without necessarily showing that each op <= logn
+
+### Stack
+
+- push(x)
+- pop(k)
+
+
+running_time = 1 unit of time.
+pop(k) = k units of time. 
+
+- sequence of n push, pop operation.
+
+- total runtime <= C.n 
+
+cannot be more than 2 time n. 
