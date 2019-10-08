@@ -780,3 +780,109 @@ pop(k) = k units of time.
 - total runtime <= C.n 
 
 cannot be more than 2 time n. 
+
+## Potential Function Method
+
+Di = State of data struct after ith op
+Do = initial state
+- potential function si: {d0, d1...} -> R where R is mostly a positive value.
+
+Ci = cost of ith op. | push(x, pop(k))
+
+usually phi is non negative function, phi(d0)= 0
+
+C_hati = actual cost + change in potential
+= ci + deltaphi = ci + phi(di) - phi(di-1)
+
+
+Total amortized cost: of all ops:
+
+Sigma(c_hati) = sigma(ci) + phi(dn) - phi(d0)
+
+Sigma(c_i) = sigma(c_hati) + phi(d0) - phi(dn)
+
+if phi(d0) = 0, phi(.) >= 0,
+
+sigma(i=1, n) <= sigma(i=1,n)c_hati
+<= n.t(n)
+
+### now seeing with stack
+
+phi = num of element son the stack. 
+
+phi(d0) = 0
+phi(.) >= 0
+
+*for push operation*
+
+amortizied cost will be =  actual cost + change in potential
+= 1 + 1
+= 2
+
+*pop operation*
+
+amortizied cost . = actual cost + change in potential
+ = k + (-k)
+ = 0
+ 
+ 
+ n-ops T(n) <= n.2 + phi(d0) - phi(dn) <= 2n
+ 
+ ## Binary Counter
+ 
+ onl;y op : Increment by 1
+ 
+ worst case time = k (when going from 011111+1 = 10000000 )
+ but will not happen very frequently. 
+ 
+Total Time <= n + n/2 + n/4 +.... <= 2.n
+
+- Potential Function: = number of 1s in the counter. 
+
+Am.C = ActC + delta(phi)
+= i+1 + (-i) + 1
+= 2
+
+## Aside:  Heaps
+min = o(1)
+insert, delete min, delete , delete key = o(logn)
+Union of 2 heaps = O(nlogn)
+
+Where we can't do better than this time. 
+
+## Binomial Heaps
+
+We can do union in O(logn)
+
+In fibonacci heaps, we can do everything in O(1) except the ops that require deletion. 
+
+ ## Bionomial Tree
+ 
+ B0, B1, B2.... and so on. 
+ 
+ B0 = .
+ b1 = . .
+ b2 = . .-. .
+ b3 = . .-. .-. .-. .
+ 
+ so bk = bk-1 bk-1 connect both sub trees. 
+ 
+ Facts: Bk has 2k nodes, height= k. 
+ bk has 2 k nodes, height = k
+ 
+ bk = bk-1 - (bk-2,,,b0) all connected hence inductively it is equiuvalent to older bk description.
+ 
+ Nodes at depth i is k choose i for i = 0,1....k.
+ 
+ 
+ Always assume 
+ - integers at nodes,
+ 
+ - heap order.
+ 
+ Defination H = {Bi1, Bi2....Bip}
+ 
+ 
+ 
+ 
+ 
