@@ -883,6 +883,26 @@ In fibonacci heaps, we can do everything in O(1) except the ops that require del
  Defination H = {Bi1, Bi2....Bip}
  
  
+ # Directed Graphs
+ 
+ G(V,E) 
+ Defination: G is called acyclic if it has **no** directed cycles.
+ Fact: Place all vertices on a line, and all edges went only forward. 
+ 
+ Think of this as the given graph. This is an acyclic graph. 
+ 
+ Every acyclic graph is exactly of this type. It is always pssible to take a acyclic graph and get it in this format.
+ 
+ 
+ Theorum: This is called topological ordering. Find topological ordering in O(m+n) or polynomial time too. 
+ 
+ ## Strongly Connectedness
+ 
+ G(V,E) is strongly connected if for all u an v belongs to V , there is u to v path. 
+ 
+ in polynomial time you can check if a graph is strongly connected or not.
+ For each vertex, check every other vertex connects or not. 
+ 
  
  
  
