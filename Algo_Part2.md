@@ -903,6 +903,96 @@ In fibonacci heaps, we can do everything in O(1) except the ops that require del
  in polynomial time you can check if a graph is strongly connected or not.
  For each vertex, check every other vertex connects or not. 
  
+ # Directed Graphs
  
  
+ If we can put the vertices on a line , the edges only go forward. It's a acyclic graph.
+ All vertices c an be numbered 1, ...n sucha that all edges (i,j): i < j. Topological ordergin, O(m+n) time using adjacency list.
  
+ Strongly connected: If for all u,v belong to V then there is u to v path. 
+ 
+ THeorum: Check in O(m+n) we can decide if G is strongly connected.
+ 
+ Algo:
+ 
+ - B.F.S also works on dir graph. 
+ - O(m+n) time given s belongs to V, decide if all vertices reachable from S. 
+ - Hence, if we have some node s, then check s to every else, check if opath, and from everywhere else to s is a path. 
+ 
+ Hence, we can prove that the graph is strongly connected. 
+ 
+ Decide if s ->>> V  (through BFS)
+ and also decide V ---> s. (do BFS on reversed graph G): change edges to point opposite and then do BFS from s to all V ??
+ 
+ 
+ # Structure Theorum for Directed Graphs. 
+ 
+ Given a Graph(V,E) 
+ 
+ We cut graph into pieces of vertices, where each parition is strongly connected.
+ 
+ So C1,c2...ci such that:
+ 
+ - For every i, take the graph and restrict it to G| ci, then this is strongly connected. 
+ - All other edges go from some component ci to cj with i < j. 
+ 
+ Every directed graph consists of it's strongly connected components plus an acyclic graph on top of them.
+ 
+ This is a decomposition of a graph, and it takes O(m+n) time to get this decomposition into strongly connected components. 
+ 
+ 17 problems on this topic kept by faculty member. 
+ 
+ ## IMPORTANT !!!!!!!! Will come in some way in the exams
+ 
+ # How to use this theorum
+ Assume graph is acyclic, then it becomes much easier to design the algorithm, then you say in general graph is not acyclic. After this is done, We find the decomposition above, and then generalise the algo for cyclic graphs so that now it works in the general case.  
+ 
+# Dijikstra's Algorithm
+
+- G(V,E), adj list
+- for all u, v belongs to E, cost/weight wt(u,v) >= 0
+s belong to V, source :
+GOal- to find shortest s->u path for all u in V. 
+
+Runs in time O(m + nlogn) time using FIbonaaci HEaps: where m is the number of edges. 
+Fibonaaci Heap is O(1) amortized. 
+m = Decrease Key and n - delete min- each O(logn) amortized tune, 
+
+## Algorithm
+ High Level: Maintain d[v] for all V
+ It stores length of s to v path found so far. 
+ - Initially d[s] = 0, d[v] = inf for all s.
+ - dist(s, u) = weight of shortest s->u path. 
+ 
+ Always dist(s, u) <= d[u] => Note : d[u] can only decrease
+ ## Idea
+ Relaxing an edge (u, v) : 
+ The label for any vertex v (d[v]), you can replace it by min(d[u] + wt(u,v)). 
+ 
+
+One non efficient solution:
+- Relax e1, e2....em
+- Do this n times. 
+O(mn) time. 
+Why does it work ? 
+
+Fix any vertex u, there is a hypothetical shortest path which can at most be of n edges. 
+
+And this being he shortest path, it is also shortest path for every intermediate vertex in this path.
+
+
+## Efficient Way
+NOw we shall find someordering so that we dont have to see all edges n times. 
+
+Relax(u): For every v such that there is an edge from u to v belongs to E
+D[V] = MIN{D[V], D[U] + WT(U,V)}
+
+Dijikstra's Algorithm:
+- Relax(s), Relax(u2).....Relax(uN)in some order
+
+- At each step, u_i is the vertex with minimum value of d[u_i] among {ui,ui+1,...un}
+
+## Claim
+
+u be outside the cluster, s is in the cluster, hypothetical path jumps out of cluster and then comes to u. 
+Ley x->y be first edge outside of T
