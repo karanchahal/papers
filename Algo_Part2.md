@@ -996,3 +996,91 @@ Dijikstra's Algorithm:
 
 u be outside the cluster, s is in the cluster, hypothetical path jumps out of cluster and then comes to u. 
 Ley x->y be first edge outside of T
+
+# Max Flows in Networks
+
+Very important and deep algorithm !!!
+
+Given a directed graph, has source and destination or source and sink.
+
+Each edge has a capacity.
+
+We want to ship maximum amount of data from source to sink. 
+
+
+### Formal Definition
+
+A flow network is :
+- Given a dir graph G
+- Every edge has a capacity - C_ee > 0 for each edge e belongs to E. 
+- Source s, sink t. 
+- No edges into s, no edges out of t. 
+
+
+What do we want to do:
+
+Send maximum amt of flow from source to sink. 
+
+What is flow ? - The capcities of each edge when we send data on 2 conditions-
+1. Can't ship more than capacity
+2. Convervation of flow. Apart from s and t, the amount of flow flowing in is equal to amount of flow going out.
+
+Measure of flow is done by seeing the amount of flow going out of source node.
+Defination:
+
+An assignment / function f: Edges -> Non negative number (real number)
+Such that 
+1. Capacity constraint- for all edges little e the flow that we send f_e is at most equal to capacity of e. 
+2. Flow conservation constraint.
+
+Problem: value(f) = sum of(flows of all e out of s)
+
+Algorithm: Find a flow with maximum value. 
+
+So basic idea, is start with all 0 flows and try to send flow 1 by 1, increasing it at every step. 
+
+#### Fact
+The value of flow out of s = sum of(flow) into the t. 
+
+Proof:
+
+Sum of flows of all edges = sum of flows of all edges
+
+Sum of all vertices, all edges going out of e = Sum of all vertices, all edges going into e
+
+cancel all vertices terms for v not equal to s and t
+
+flow of all edges going out of source = flow of all edges going out of sink
+
+## CUts
+
+A cut X, X_bar is a partition V = X union X_bar
+
+such that: s belongs to X
+t belongs to X_bar.
+
+capacity(X, X_bar) = sum of all capacities c_E such that e is from a, b with a belinging to X and b belonging to X_bar.
+
+("sum of capcities of all forward edges")
+#### Claim:
+The flow value is amount of flow in the forward eges - flow value in backward edges
+
+Let X, X_bar be a cut: X is the source side and X_bar is in sink side.
+value(f) = sum over all edges f_e, where e is of type a,b where a is in X and b is in X_bar - sum of flows in backward edges (edge in c . and c, where c is in X_bar and d is in X)
+<= sum over all edges f_e, where e is of type a,b where a is in X and b is in X_bar
+<= cap(X, X_bar)
+
+Max flow <= min cut capacity. 
+
+
+##### Now prove that max flow = min cut capacity.
+
+Value(f) = sum of all f(e) out of s + (sum of flow out of v - sum of flow out of v for all v in X) (will be zero so hence we put it int)
+
+ = sum of flow of e forward -  sum of flow of e backward
+
+### Algorithm -  Find paths and send flow along it (and repeat)
+
+If we find a bad oath, we are kind of stuck. If we cant do better and some nodes are unutilized. 
+
+Send flow in reverse, we we can interpret it as decreasing the flow of a valid edge
