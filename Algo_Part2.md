@@ -1083,4 +1083,97 @@ Value(f) = sum of all f(e) out of s + (sum of flow out of v - sum of flow out of
 
 If we find a bad oath, we are kind of stuck. If we cant do better and some nodes are unutilized. 
 
-Send flow in reverse, we we can interpret it as decreasing the flow of a valid edge
+Send flow in reverse, we we can interpret it as decreasing the flow of a valid edge.
+
+### Ramsey Numbers
+TODO
+
+### Contention Resolution
+
+Controller,  Database, processes.
+Send requets , if exactly 1 prcess gets the access or nobody gets it.
+How to design protocol where each process can get request served.
+Processes cannot talk to each other.
+
+How will you design protocol ?
+If we allow randomisation, we can achieve everything we hope to achieve. 
+
+### Protocol
+p = sends request with probability : 1/n.
+For each round t. 
+Ai,t = event that sends Pi sends req Pr[Ai,t intersec Aj,t]
+
+pr[pi succeds inb round t] = p(1-p)^(n-1)
+= 1/n(1-1/n)^(n-1)
+= 1/n[1/e,1/2]
+T rounds t = 1,2,...T:   T = 2enlogn
+Pr[Pi does not suceed even once] <= (1-(1/ne))^T
+= ((1-(1/ne))^ne)^2logn
+<= (1/e)^2logn
+= (1/n^2)
+
+Pr[some process Pi does not suceed even once] <= (union bound) n*(1/n^2) = 1/n
+
+
+## Expectation
+
+Random varibale is a varibale for a thing we are interested in, assign number o every entity.
+
+Expectation of the random variable is average of a random variable. 
+Indicator random varibales -  boolean of a state, whether student is cience major or not types. 
+omega = {head,tails}10:
+Random varibale can be how many heads did you get.
+
+Given a random varibale, undertsand the distribution of this random variable. 
+FOr example, we are interested in how heights are distributed. 
+Expecteation is average
+
+Formal Deifnition:
+X: Map of omega to real numbers, 
+Expectation of X: weighted avergage with he weights being the probabilities of that occurance. 
+It is a weighted average of the value of the random variable.
+
+### Note 
+If (omega, P) is uniform, E[X] = E(X(w)/|omega|
+
+Problem
+: FInd number Expectatiopn of num heads in n tosses of coin
+SIgma from 0 to n(pr[X=j]*j
+= sigma from o to n(j*(nCj)/2^n = n/2
+
+# Linearity of Expectation
+If we have 2 random varibale, and we wantthe average of sum of two random varibnales
+
+Then it is the sum of averages of 2 random variables::=>
+E[X+y] = E[x] + E[y]
+Expec1+ Expec2
+
+Very simple but very powerful idea. 
+
+Hence use this prob of number if heada
+
+Xi = {1 if ith toss is heads, 0 otherwise}
+then E[X] = sum from 1 to n E[Xi] = n*1/2
+
+
+Fact  If Z is indicator {0,1}- valued
+then E[Z] = Pr[Z=1]
+
+# Finding max cut in graphs (randomised algo)
+
+Definition: A cut in a graph G is just a a partition of the vertices V = S union S_
+
+e(S,S_): set of all deges with vertices i and j where i is in set i and j is in set j.
+
+If in a graoh, find me a cut whise size is maximum, size meaning number of edges cut. 
+
+Size = look at edges which are cut, give their number.
+
+Theorum: There exists S, S_ such that number of edges cut is half of the number of edges. n/2. Moreover, we can find this cut in polynomial time with a randomised algorithm. 
+
+Basic Idea- Average should be high but the MAXIMUM shold not be that high. 
+
+
+
+
+
