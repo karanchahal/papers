@@ -1173,7 +1173,96 @@ Theorum: There exists S, S_ such that number of edges cut is half of the number 
 
 Basic Idea- Average should be high but the MAXIMUM shold not be that high. 
 
+# Hashing
+
+Universe of hashing functions;
+A hashing function maps a universe of keys to n values.
+hash function family = pairwise independendent or 2- universal if : for all x,y in the universe which are distinct for all indices, i and j. if we pick hash function h from H, the probabilt that h(x) = i and h(y) isj =  1/n^2. 
+
+Fix i where 0 < i < n-1
+
+Let L(i) = number of {x belongs to S | h(x) = i}
+Claim Expecttatoin L(i) = 1
+
+Let Xa = { 1 if h(a) = i, 0 otherwise }
+l(i) = sigma(Xa) for all a belongs to S.
+Expectattion L(i) = n*1/n = 1
+
+By Markov: Pr[L(i) >= 50] <= 1/50; pr[X >= t.E[x]] <= 1/t
+
+## Variance
+Definition: X is a random varibale. Then it's varinace let U = E[x].
+var(x) = E[|X - u|^2]
+Variance of x is expected value of x^2 - u^2.
+
+Second moment of random variable = E[x^2]
+
+Proof of Variance of x is expected value of x^2 - u^2.:
+Open up soltion and do something so thst renmove scalers. etc. 
+
+Ex: X = {1 p, 0 1-p.   E[x] = p, E[x^2] = p : var(x) = p(1-p) (p - p^2)
 
 
 
+Chebychev's Inequality: 
 
+Pr[X >= t.E[X] ] <= E[X^2]/(E[x]^2*t^2)
+
+Proof:
+Pr[X >= E[x]] = Pr[ X^2 >= t^2E[X]^2] <= E[x^2] / (t^2*E[x]^2
+
+pr[|X-u| >= T = Pr[X-u|^2 >= T^2] <= var(X)/T^2
+
+Now back to proof of hashing:
+= E[L(i)^2] = E[(sigma(Xa)^2 for all a belongs to S]: { Xa = 1 if h(a) = 1 else 0 }
+= E[sigmaXa^2] + E[sigma a not equal to b XaXb]
+= n*1/n + n(n-1).1/n^2 <= 2
+
+## By Chebychev's Inequality
+
+Pr[L[i] >= t] <= E[Li(i)^2]/t^2 = 2/t^2
+Pr[L(i) >= 50] <= 1/1250
+
+
+## Constructing pairwise indep hash family
+
+Goal: H Pr[h(x) = i intersect h(y) = j] = 1/n^2
+Assume for now that \U\ = n, U = {0,1,...n-1}, n prime, h: {0,1,...n-1}-> {0,1,...n-1}
+
+For any two numbers a,b in 0 to n-1 let ha,b(x) = ax + b (mod n);
+
+## NP Completness
+
+You will have one problem on NP completness in the exam. 
+P subspace of problems - P stands for polynomial algorithms. 
+
+problem Name = MST; Instance = Graph with V,E and cost in each edge}
+
+
+NP Problems = 3SAT, Vertex Cover, Hamiltonion Cycle, Subset Sum etc. 
+NP is not NOT POLYNOMIAL, fron theoretical view.
+
+
+NP Problems can be solved using Non Deterministic Turing Machine in polynomial time. 
+Can this device exist for real ?
+
+
+NP = Non Deterministic Polynomial Time. 
+
+4 terms in NP:
+- Problem
+- instance
+- Solution
+- Candidate Solution
+
+
+# Hamiltonian Cycle
+instance: G(v,e), |v| = n
+Solution: hamiltonian cycle in G(V,E)
+
+Candidate Solution:  Sequence of vertices, V1,V2....Vn.
+
+Checking a solution: for all i between 1 and n are all distinct. 
+- V(i, Vi+1) belongs to E, for 1 < i < n-1, (Vn,V1) belongs to E. 
+
+Checking for solution n is not always easy (polynomial)
