@@ -1266,3 +1266,124 @@ Checking a solution: for all i between 1 and n are all distinct.
 - V(i, Vi+1) belongs to E, for 1 < i < n-1, (Vn,V1) belongs to E. 
 
 Checking for solution n is not always easy (polynomial)
+
+# Computational Problems, Computing, Algorithms, P, NP
+
+Alphabet Sigma = {0,1}
+= {a,z}
+= {a,z,A-Z, 0-9,!@#$...}
+
+STring over alphabet = Sigma star = Set of all finite length strings over sigma
+= {enumerate all strings in increasing order of length}
+Epsilon . is empty string. 
+
+## Language
+L is set of string but not set of all strings. 
+L is a set of STRINGS. 
+L is subset of Sigma star. 
+
+Leven = set of all even length strings. 
+L english = Set of all valid words in dictonary. 
+and so on...
+
+Computational Problem is basically membership problem of a language !!
+
+For every language L, there is a decision problem Pl
+
+" Given input x belongs to sigma star, is x belonging to L ? "
+
+Note: For every Language L, there is a decision membership problem Pl
+"Given input x belongs to Sigma star, is x belongs to L ? "
+- Size of input n = abs x. 
+
+Note: every decision problem can be cast/ translated as a membership problem for an apprx language L. 
+
+Eery object can be encoded into a string say for example a graph: make a string of adjacency matrix. Sigma: {0,1,#}
+0011#0101:01010 etc. 
+
+More examples of computational problems:
+
+Lgraphs = {<G> G is a undirected graph } ; here diagonal should be zero, Mij = Mji. 
+
+Lbipartite = {<G> | G is a bipartite graph}: Plbipartite :  Given graph, is it bipartite. 
+ 
+L half_clique = {Set of all graphs G, G has 2n vertices and has a clique of size n }.
+ 
+L clique = {<G,k> |  G has clique has size >= K}
+ 
+L3sat = {All formulas phi, such that phi has a satisfying assignment}
+
+
+# Computational Device
+
+TURING MACHINES !!!!
+
+It solves a computational problem. 
+
+
+Takes input x outputs yes or no whether x belongs to lang, no if x doesnt belong to lang. 
+T(n) = worst case.
+
+
+## Turing Machine
+
+It has 2 componoents, one is called the input tape.
+ A tape is simply an infinte sequence in one direction of cells. Each cell contains a symbol. 
+ Given A alphabet sigma = {0, 1}, each cell would contain 0 or 1.
+ 
+ Given input x we write it down as initial prefix in input tape. 
+ 
+ 
+ There will be a special token, we mention where input has ended.  We use the blank symbol to portray this. 
+ 
+ So we can think of input tape inital version to be input x and infinte series of Blanks. 
+ 
+ gamma = sigma union infinite series of blanks. 
+ 
+ Second compinent in turing machine is control. 
+ 
+ We have Q:  finite set of "states" . S1, s2,...sk. , S start, Saccept, Sreject.
+  Machine or control starts from S start. called start state. 
+  
+ k is independent of n, length of input. The description of machine is of constant size. 
+ 
+ 
+ Program is a bunch of instructions of following type:
+ 
+Example Of Instruction :=> If current state equals S6. symbol read = '0', then change state to S8, chamge symbol at pointer to '1', move pointer by one place to right. 
+ 
+ 
+ Set of instructions 
+ Gamma: Q x P-> Q x P x {left, right, or stay put}
+ 
+ Gamma is set of symbols pointed by pointer. 
+ You can iagena table: we have 10 alphabets, 36 set of states. so we will have 360 gamma. 
+ 
+ 
+ M = {(Q, sigma, P, gamma, s_start, s_accept, s_reject)}
+ 
+ Execution COmputing
+ 
+ Initial config pointer or contrl is at S_start:
+ 
+ 
+ AT some point we have to conclude if x is in language or not. 
+ 
+ In T(n): The machine enters accept or reject. 
+ 
+ 
+ One would want to design a turing machine that for some T(n) on input of length n,  the machine executes at most T
+(n) steps and enters either the state Saccept or Sreject. 
+
+
+Algorithm for problem L that runs in time T(n). 
+
+WHat if machine goes on indefinitely, its the theory of undecidable problems. 
+
+Exercies: Consider Language is palindromes, {all x such that x = reverse x}
+Sigma = {0,1}
+
+Claim: n^2 algorithms: 01100100BBB
+States incorprate memory:
+
+Time complexity of Turning Machine problem,  will be polynomial to T(n) if T(n) is a computer running time. 
