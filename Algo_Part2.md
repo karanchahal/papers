@@ -1387,3 +1387,128 @@ Claim: n^2 algorithms: 01100100BBB
 States incorprate memory:
 
 Time complexity of Turning Machine problem,  will be polynomial to T(n) if T(n) is a computer running time. 
+
+
+# Deterministic Turing Machine
+
+DTIME = T(n), defines all class of languages that can be solved by a determinitic turing machine in time O(T(n)).
+Example: 
+Language of palindromes - belongs to DTIME(n^2).
+
+P = union of these languages that are of DTIME(n^k), where k is a constant.
+
+Problems not known in P:
+
+- 3SAT
+- Vertex Cover
+- TSP
+
+Now we can use Non determinitic turing machines to compute problems not in P quickly. 
+
+Some ideas:
+1. Polynomial algos is coinsidered good 
+as historically we have lessened n20 to n2. 
+- Results in good theory (group theory)
+- composition of polynomial algorithms is polynomial. 
+
+# Non Determinitic Turing Machine
+
+Superpower to win the lottery (randomly get good results)
+
+### What is it ?
+
+Look similiar to turing machines, same input x and followed by series of blanks, start state. Pointer.
+
+In deterministic case, at every point, machine has only 1 move.
+But in ND, machine can take more than 1 possible choices. Without loss in generality, we assume that we have exactly 2 choices. 
+a: QxP -> QxPx{L,R} for determinisitc turing machine
+a: QxP -> P(QxPx{L,R})
+P means for certain state, we could have 2 or 17 possibkle moves. or any thing. 
+
+
+At each state, we have a posiibkle next step, form tree of steps, at the leaves we have a accept or rehect
+
+we have 2^(t(n)) leaves, then we can do 
+
+AND/OR(NP), MAJ(PP), XOR(+P)
+
++P and PP are much greater in number than NP languages. 
+
+Definations : L belong to NTIME(t(n)) if there is a NTM that runs in time t(n) and
+
+x belongs to L => M has at least one accepting computation. 
+X doesnt belong to L -> all computations reject. 
+
+NP = Union of NTIME(n^k)
+
+P is a subset of NP. 
+
+every determinitic machine is also a non determinisitc machines, thinkn of determinitic turning machine to aslo have 2 choices, one the right path, second the reject. 
+
+## Fact:
+
+A NTM M, running in time t(n) can w.l.og be assumed to be of type 
+
+M = "on input X, \X\ = n, non det selects y belongs to {0,1}t(n).
+
+Run a det m/c M* on (x,y).
+
+
+## Example
+Problem Lang 3Sat
+instance phi .   phi (X1,...Xm)
+Candidate soln : y .   {X1, Xm} -> {0 or 1}
+Checking / Verification . M* .  acc/rej depending on whether candidate soln satisfies instance.
+Correct soln: y : M*(x,y) = acceot : candiate solumn : is satisfying assignment. 
+
+3SAT = {phi | phi has a satisying assignment} (phi is "satisfiable")
+
+3SAT belong sot NP: Following polytime NTM M
+
+M = "Given phi with n vars, non det select assignment phi belongs to {0,1}^n".
+
+Accept if sigma(cand soln) satisfies phi(instancde of problem). Reject otherwise. 
+
+
+phi beings to 3 sat -> phi does have a sat assighn -> M on choice sigma star accept. 
+phi doesnt belong to 3 sat -> phi has no sat assign => M always rejects.
+
+Therefore M accepts 3SAT. 
+
+
+FOr hamiltonian cycle: Lang : all graohs, G such that g has a hamiltonion cycle. 
+
+The following NDM, M will non determinitically select a sequence of vertices (v1,v2...vn) then accept if this sequence forms a hamiltonion cycle.
+
+
+Accept if v1 and v2 i an edges, and vn connect back to v1 and they are all distince and number of vertices are at least k. 
+
+Reject otherwise.
+
+Note: Sequence of vertices witll be of size n*log(n) as vertices is numbered form 1 to n and can be denoted as logn. 
+
+
+# Reduction using Turing Machines:
+
+A,B are languages. A <=p B if 
+
+there is polytime det Turing Machine M that on input x produces output M(x)
+
+Note: Modify turing machine to have output tape, and machine will keep writing to output tape, write symbol to output tape and moves pointer ahead to output tape. 
+
+Lang A reduced to B if there is a reduction that on input x it produces output M(x) such that 
+
+x belong to A <=> M(x) belong to B
+
+Instance of A can be reduced to Instance of B. 
+in polynomial time. 
+
+Excercie: A reduced to B, and B reduces to C then A reduces to C. Think about composibility of polynomial algorithms. 
+
+2. A reduced to B, B belongs to P, then A belongs to P. If input of size n of A , goes to n^5 in B, then running time of A will be (n^3)^5
+
+
+Defination: A language L is N.P complete 
+- if L belongs to NP.
+- For all A belongs to NP, A reduces to L.
+
